@@ -1,5 +1,4 @@
 import { Geist_Mono, Oxanium, Noto_Sans } from "next/font/google"
-import Image from "next/image"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -19,7 +18,8 @@ const fontMono = Geist_Mono({
 
 export const metadata = {
   title: "Quản Lý Lịch Trình",
-  description: "Ứng dụng quản lý lịch trình cá nhân ",
+  description: "Ứng dụng quản lý lịch trình cá nhân",
+  manifest: "/manifest.json",
   icons: {
     icon: "/icon.png",
     shortcut: "/icon.png",
@@ -35,6 +35,7 @@ export const metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
+    title: "Lịch Trình",
   },
 }
 
@@ -55,6 +56,15 @@ export default function RootLayout({
         notoSansHeading.variable
       )}
     >
+      <head>
+        <meta name="application-name" content="Quản Lý Lịch Trình" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Lịch Trình" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="apple-touch-icon" href="/icon.png" />
+      </head>
       <body>
         <ThemeProvider defaultTheme="light" forcedTheme="light">
           {children}
