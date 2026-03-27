@@ -21,9 +21,9 @@ export const metadata = {
   title: "Quản Lý Lịch Trình",
   description: "Ứng dụng quản lý lịch trình cá nhân ",
   icons: {
-    icon: "/image/logo.png",
-    shortcut: "/image/logo.png",
-    apple: "/image/logo.png",
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
   viewport: {
     width: "device-width",
