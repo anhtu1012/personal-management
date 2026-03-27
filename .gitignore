@@ -35,8 +35,7 @@ pnpm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# PWA files
-/public/sw.js
+# PWA files (keep sw.js as it's manually created)
 /public/workbox-*.js
 /public/worker-*.js
 /public/sw.js.map

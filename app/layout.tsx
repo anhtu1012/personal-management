@@ -3,6 +3,7 @@ import { Geist_Mono, Oxanium, Noto_Sans } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
+import { RegisterSW } from "./register-sw"
 
 const notoSansHeading = Noto_Sans({
   subsets: ["latin"],
@@ -67,6 +68,7 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider defaultTheme="light" forcedTheme="light">
+          <RegisterSW />
           {children}
         </ThemeProvider>
       </body>
