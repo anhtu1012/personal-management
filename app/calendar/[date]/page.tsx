@@ -11,6 +11,7 @@ import { Navigation } from "@/components/ui/navigation"
 import { SwipeableTask } from "@/components/ui/swipeable-task"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { completeTask, deleteTask } from "@/store/slices/taskSlice"
+import type { Task } from "@/types"
 
 export default function DateDetailPage({
   params,
@@ -27,15 +28,15 @@ export default function DateDetailPage({
 
   const dayTasks = useMemo(() => {
     return tasks
-      .filter((task) => task.date === dateStr)
-      .sort((a, b) => {
+      .filter((task: Task) => task.date === dateStr)
+      .sort((a: Task, b: Task) => {
         if (a.completed !== b.completed) return a.completed ? 1 : -1
         return (a.time || "").localeCompare(b.time || "")
       })
   }, [tasks, dateStr])
 
-  const pendingTasks = dayTasks.filter((t) => !t.completed)
-  const completedTasks = dayTasks.filter((t) => t.completed)
+  const pendingTasks = dayTasks.filter((t: Task) => !t.completed)
+  const completedTasks = dayTasks.filter((t: Task) => t.completed)
 
   const handleCompleteTask = (id: string) => {
     dispatch(completeTask(id))
@@ -114,7 +115,7 @@ export default function DateDetailPage({
               </h2>
               <div className="space-y-2 sm:space-y-3">
                 <AnimatePresence>
-                  {pendingTasks.map((task, index) => (
+                  {pendingTasks.map((task: Task, index: number) => (
                     <motion.div
                       key={task.id}
                       initial={{ opacity: 0, x: -12 }}
@@ -145,7 +146,7 @@ export default function DateDetailPage({
                 Đã hoàn thành
               </h2>
               <div className="space-y-2 sm:space-y-3">
-                {completedTasks.map((task) => (
+                {completedTasks.map((task: Task) => (
                   <motion.div
                     key={task.id}
                     initial={{ opacity: 0 }}
