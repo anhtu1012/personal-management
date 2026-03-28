@@ -1,16 +1,18 @@
 "use client"
 
 import { useMemo } from "react"
-import { X, CaretDown, CaretRight, Check } from "@phosphor-icons/react"
+import { X, CaretDown, CaretRight, Check, FilePdf } from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "framer-motion"
 import { GlassCard } from "./glass-card"
 import { Input } from "./input"
 import { Label } from "./label"
+import { MemberDetailPDF } from "./member-detail-pdf"
 import type { Member, Expense } from "@/types"
 import { cn, formatMoney } from "@/lib/utils"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 import { useState } from "react"
+import { exportToPDF } from "@/lib/export-pdf"
 
 interface MemberDetailModalProps {
   isOpen: boolean
@@ -118,10 +120,30 @@ export function MemberDetailModal({
     setShowSettlement(false)
   }
 
+  const handleExportPDF = async () => {
+    const fileName = `chi-tiet-${member.name.toLowerCase().replace(/\s+/g, '-')}-${format(new Date(), 'dd-MM-yyyy')}`
+    await exportToPDF('member-detail-content', fileName)
+  }
+
   const quickSettlementAmounts = [10, 20, 50, 100, 200, 500]
 
   return (
-    <AnimatePresence>
+    <>
+      {/* Hidden PDF content - rendered in DOM but hidden */}
+      <div style={{ position: 'fixed', left: '-9999px', top: 0, width: '800px' }}>
+        <div id="member-detail-content">
+          <MemberDetailPDF
+            member={member}
+            expenses={memberExpenses}
+            allMembers={allMembers}
+            totalPaid={totalPaid}
+            totalOwed={totalOwed}
+            balance={balance}
+          />
+        </div>
+      </div>
+
+      <AnimatePresence>
       {isOpen && (
         <>
           <motion.div
@@ -159,12 +181,21 @@ export function MemberDetailModal({
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={onClose}
-                  className="rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-slate-200 active:scale-95 dark:hover:bg-slate-700"
-                >
-                  <X size={20} weight="bold" className="text-slate-700 dark:text-slate-300" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleExportPDF}
+                    className="rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-slate-200 active:scale-95 dark:hover:bg-slate-700"
+                    title="Xuất PDF"
+                  >
+                    <FilePdf size={20} weight="bold" className="text-rose-600 dark:text-rose-400" />
+                  </button>
+                  <button
+                    onClick={onClose}
+                    className="rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-slate-200 active:scale-95 dark:hover:bg-slate-700"
+                  >
+                    <X size={20} weight="bold" className="text-slate-700 dark:text-slate-300" />
+                  </button>
+                </div>
               </div>
 
               {/* Summary */}
@@ -385,5 +416,6 @@ export function MemberDetailModal({
         </>
       )}
     </AnimatePresence>
+    </>
   )
 }
