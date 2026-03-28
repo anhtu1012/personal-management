@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Middleware } from "@reduxjs/toolkit"
 import { RootState } from "../index"
 
 export const localStorageMiddleware: Middleware<{}, RootState> =
-  (store) => (next) => (action) => {
+  (store) => (next) => (action: any) => {
     const result = next(action)
 
     // Sync tasks to localStorage after any task action
