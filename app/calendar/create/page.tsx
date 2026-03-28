@@ -86,8 +86,8 @@ function CreateTaskForm() {
           onClick={() => router.back()}
           className="liquid-panel rounded-xl p-2 sm:p-2.5"
         >
-          <ArrowLeft size={18} weight="bold" className="text-slate-700 sm:hidden" />
-          <ArrowLeft size={20} weight="bold" className="hidden text-slate-700 sm:block" />
+          <ArrowLeft size={18} weight="bold" className="text-slate-700 dark:text-slate-300 sm:hidden" />
+          <ArrowLeft size={20} weight="bold" className="hidden text-slate-700 dark:text-slate-300 sm:block" />
         </motion.button>
         <h1 className="liquid-title text-xl font-bold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl">
           Tạo Task Mới
@@ -103,11 +103,11 @@ function CreateTaskForm() {
             <div>
               <Label
                 htmlFor="title"
-                className="mb-1.5 flex items-center gap-2 text-xs font-semibold sm:mb-2 sm:text-sm md:text-base"
+                className="mb-1.5 flex items-center gap-2 text-xs font-semibold dark:text-slate-300 sm:mb-2 sm:text-sm md:text-base"
               >
                 <span className="liquid-panel rounded-lg p-1 sm:p-1.5">
-                  <TextAa size={14} className="text-slate-700 sm:hidden" />
-                  <TextAa size={16} className="hidden text-slate-700 sm:block" />
+                  <TextAa size={14} className="text-slate-700 dark:text-slate-300 sm:hidden" />
+                  <TextAa size={16} className="hidden text-slate-700 dark:text-slate-300 sm:block" />
                 </span>
                 Tiêu đề
               </Label>
@@ -116,7 +116,7 @@ function CreateTaskForm() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Nhập tiêu đề task..."
-                className="h-10 rounded-xl border-slate-300/60 bg-white/75 text-sm sm:h-11"
+                className="h-10 rounded-xl border-slate-300/60 bg-white/75 text-sm dark:border-slate-600/60 dark:bg-slate-800/75 dark:text-slate-100 sm:h-11"
                 required
                 autoFocus
               />
@@ -125,11 +125,11 @@ function CreateTaskForm() {
             <div>
               <Label
                 htmlFor="description"
-                className="mb-1.5 flex items-center gap-2 text-xs font-semibold sm:mb-2 sm:text-sm md:text-base"
+                className="mb-1.5 flex items-center gap-2 text-xs font-semibold dark:text-slate-300 sm:mb-2 sm:text-sm md:text-base"
               >
                 <span className="liquid-panel rounded-lg p-1 sm:p-1.5">
-                  <AlignLeft size={14} className="text-slate-700 sm:hidden" />
-                  <AlignLeft size={16} className="hidden text-slate-700 sm:block" />
+                  <AlignLeft size={14} className="text-slate-700 dark:text-slate-300 sm:hidden" />
+                  <AlignLeft size={16} className="hidden text-slate-700 dark:text-slate-300 sm:block" />
                 </span>
                 Mô tả
               </Label>
@@ -139,7 +139,7 @@ function CreateTaskForm() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Mô tả chi tiết về task..."
                 rows={4}
-                className="min-h-24 rounded-xl border-slate-300/60 bg-white/75 text-sm sm:min-h-30 sm:rows-5"
+                className="min-h-24 rounded-xl border-slate-300/60 bg-white/75 text-sm dark:border-slate-600/60 dark:bg-slate-800/75 dark:text-slate-100 sm:min-h-30 sm:rows-5"
               />
             </div>
 
@@ -147,11 +147,11 @@ function CreateTaskForm() {
               <div>
                 <Label
                   htmlFor="date"
-                  className="mb-1.5 flex items-center gap-2 text-xs font-semibold sm:mb-2 sm:text-sm md:text-base"
+                  className="mb-1.5 flex items-center gap-2 text-xs font-semibold dark:text-slate-300 sm:mb-2 sm:text-sm md:text-base"
                 >
                   <span className="liquid-panel rounded-lg p-1 sm:p-1.5">
-                    <CalendarBlank size={14} className="text-slate-700 sm:hidden" />
-                    <CalendarBlank size={16} className="hidden text-slate-700 sm:block" />
+                    <CalendarBlank size={14} className="text-slate-700 dark:text-slate-300 sm:hidden" />
+                    <CalendarBlank size={16} className="hidden text-slate-700 dark:text-slate-300 sm:block" />
                   </span>
                   Ngày
                 </Label>
@@ -160,18 +160,18 @@ function CreateTaskForm() {
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="h-10 rounded-xl border-slate-300/60 bg-white/75 text-sm sm:h-11"
+                  className="h-10 rounded-xl border-slate-300/60 bg-white/75 text-sm dark:border-slate-600/60 dark:bg-slate-800/75 dark:text-slate-100 sm:h-11"
                   required
                 />
               </div>
               <div>
                 <Label
                   htmlFor="time"
-                  className="mb-1.5 flex items-center gap-2 text-xs font-semibold sm:mb-2 sm:text-sm md:text-base"
+                  className="mb-1.5 flex items-center gap-2 text-xs font-semibold dark:text-slate-300 sm:mb-2 sm:text-sm md:text-base"
                 >
                   <span className="liquid-panel rounded-lg p-1 sm:p-1.5">
-                    <Clock size={14} className="text-slate-700 sm:hidden" />
-                    <Clock size={16} className="hidden text-slate-700 sm:block" />
+                    <Clock size={14} className="text-slate-700 dark:text-slate-300 sm:hidden" />
+                    <Clock size={16} className="hidden text-slate-700 dark:text-slate-300 sm:block" />
                   </span>
                   Giờ
                 </Label>
@@ -180,16 +180,16 @@ function CreateTaskForm() {
                   type="time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="h-10 rounded-xl border-slate-300/60 bg-white/75 text-sm sm:h-11"
+                  className="h-10 rounded-xl border-slate-300/60 bg-white/75 text-sm dark:border-slate-600/60 dark:bg-slate-800/75 dark:text-slate-100 sm:h-11"
                 />
               </div>
             </div>
 
             <div>
-              <Label className="mb-1.5 flex items-center gap-2 text-xs font-semibold sm:mb-2 sm:text-sm md:text-base">
+              <Label className="mb-1.5 flex items-center gap-2 text-xs font-semibold dark:text-slate-300 sm:mb-2 sm:text-sm md:text-base">
                 <span className="liquid-panel rounded-lg p-1 sm:p-1.5">
-                  <FlagBanner size={14} className="text-slate-700 sm:hidden" />
-                  <FlagBanner size={16} className="hidden text-slate-700 sm:block" />
+                  <FlagBanner size={14} className="text-slate-700 dark:text-slate-300 sm:hidden" />
+                  <FlagBanner size={16} className="hidden text-slate-700 dark:text-slate-300 sm:block" />
                 </span>
                 Ưu tiên
               </Label>
@@ -266,7 +266,7 @@ function CreateTaskForm() {
             </div>
 
             <div>
-              <Label className="mb-2 block text-xs font-semibold sm:text-sm md:text-base">
+              <Label className="mb-2 block text-xs font-semibold dark:text-slate-300 sm:text-sm md:text-base">
                 Danh mục
               </Label>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -367,11 +367,11 @@ function CreateTaskForm() {
             <div>
               <Label
                 htmlFor="tags"
-                className="mb-1.5 flex items-center gap-2 text-xs font-semibold sm:mb-2 sm:text-sm md:text-base"
+                className="mb-1.5 flex items-center gap-2 text-xs font-semibold dark:text-slate-300 sm:mb-2 sm:text-sm md:text-base"
               >
                 <span className="liquid-panel rounded-lg p-1 sm:p-1.5">
-                  <Tag size={14} className="text-slate-700 sm:hidden" />
-                  <Tag size={16} className="hidden text-slate-700 sm:block" />
+                  <Tag size={14} className="text-slate-700 dark:text-slate-300 sm:hidden" />
+                  <Tag size={16} className="hidden text-slate-700 dark:text-slate-300 sm:block" />
                 </span>
                 Tags
               </Label>
@@ -379,10 +379,10 @@ function CreateTaskForm() {
             </div>
 
             <div>
-              <Label className="mb-1.5 flex items-center gap-2 text-xs font-semibold sm:mb-2 sm:text-sm md:text-base">
+              <Label className="mb-1.5 flex items-center gap-2 text-xs font-semibold dark:text-slate-300 sm:mb-2 sm:text-sm md:text-base">
                 <span className="liquid-panel rounded-lg p-1 sm:p-1.5">
-                  <ArrowsClockwise size={14} className="text-slate-700 sm:hidden" />
-                  <ArrowsClockwise size={16} className="hidden text-slate-700 sm:block" />
+                  <ArrowsClockwise size={14} className="text-slate-700 dark:text-slate-300 sm:hidden" />
+                  <ArrowsClockwise size={16} className="hidden text-slate-700 dark:text-slate-300 sm:block" />
                 </span>
                 Lặp lại
               </Label>
@@ -400,8 +400,8 @@ function CreateTaskForm() {
                     className={cn(
                       "rounded-lg border px-2 py-2 text-xs font-medium transition-all",
                       recurring === rec.value
-                        ? "border-slate-400 bg-white shadow-md ring-2 ring-slate-300/50"
-                        : "border-slate-300/50 bg-white/70 hover:bg-white"
+                        ? "border-slate-400 bg-white shadow-md ring-2 ring-slate-300/50 dark:border-slate-600 dark:bg-slate-800 dark:ring-slate-500/50"
+                        : "border-slate-300/50 bg-white/70 hover:bg-white dark:border-slate-600/50 dark:bg-slate-800/70 dark:hover:bg-slate-800"
                     )}
                   >
                     {rec.label}
@@ -410,7 +410,7 @@ function CreateTaskForm() {
               </div>
               {recurring !== "none" && (
                 <div className="mt-2">
-                  <Label htmlFor="recurringEndDate" className="mb-1 block text-xs text-slate-600">
+                  <Label htmlFor="recurringEndDate" className="mb-1 block text-xs text-slate-600 dark:text-slate-400">
                     Kết thúc lặp (tùy chọn)
                   </Label>
                   <Input
@@ -418,7 +418,7 @@ function CreateTaskForm() {
                     type="date"
                     value={recurringEndDate}
                     onChange={(e) => setRecurringEndDate(e.target.value)}
-                    className="h-9 rounded-xl border-slate-300/60 bg-white/75 text-sm"
+                    className="h-9 rounded-xl border-slate-300/60 bg-white/75 text-sm dark:border-slate-600/60 dark:bg-slate-800/75 dark:text-slate-100"
                   />
                 </div>
               )}
@@ -428,13 +428,13 @@ function CreateTaskForm() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="rounded-xl border border-slate-300/60 bg-white/78 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white sm:px-4 sm:py-2.5"
+                className="rounded-xl border border-slate-300/60 bg-white/78 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white dark:border-slate-600/60 dark:bg-slate-800/78 dark:text-slate-200 dark:hover:bg-slate-800 sm:px-4 sm:py-2.5"
               >
                 Hủy
               </button>
               <button
                 type="submit"
-                className="rounded-xl border border-slate-300/70 bg-white/92 px-3 py-2 text-sm font-semibold text-slate-800 transition hover:bg-white sm:px-4 sm:py-2.5"
+                className="rounded-xl border border-slate-300/70 bg-white/92 px-3 py-2 text-sm font-semibold text-slate-800 transition hover:bg-white dark:border-slate-600/70 dark:bg-slate-800/92 dark:text-slate-100 dark:hover:bg-slate-800 sm:px-4 sm:py-2.5"
               >
                 Tạo Task
               </button>

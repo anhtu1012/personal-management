@@ -7,15 +7,25 @@ import { motion } from "framer-motion"
 import { Navigation } from "@/components/ui/navigation"
 import { GlassCard } from "@/components/ui/glass-card"
 import { ExpandableCalendar } from "@/components/ui/expandable-calendar"
-import { useTasks } from "@/hooks/use-tasks"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { completeTask, deleteTask } from "@/store/slices/taskSlice"
 
 export default function CalendarPage() {
   const router = useRouter()
-  const { tasks, completeTask, deleteTask } = useTasks()
+  const dispatch = useAppDispatch()
+  const tasks = useAppSelector((state) => state.tasks.tasks)
   const [selectedDate, setSelectedDate] = useState(new Date())
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date)
+  }
+
+  const handleCompleteTask = (id: string) => {
+    dispatch(completeTask(id))
+  }
+
+  const handleDeleteTask = (id: string) => {
+    dispatch(deleteTask(id))
   }
 
   return (
@@ -47,25 +57,23 @@ export default function CalendarPage() {
             </h1>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+          <button
             onClick={() => router.push("/calendar/create")}
-            className="liquid-panel flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-800 dark:text-slate-100 sm:gap-2 sm:rounded-2xl sm:px-3 sm:py-2 sm:text-sm"
+            className="liquid-panel flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-800 transition-transform duration-200 active:scale-95 dark:text-slate-100 sm:gap-2 sm:rounded-2xl sm:px-3 sm:py-2 sm:text-sm"
           >
             <Plus size={16} weight="bold" className="sm:hidden" />
             <Plus size={18} weight="bold" className="hidden sm:block" />
             <span className="hidden sm:inline">Tạo task</span>
             <span className="sm:hidden">Tạo</span>
-          </motion.button>
+          </button>
         </motion.header>
 
         <ExpandableCalendar
           selectedDate={selectedDate}
           onSelectDate={handleDateSelect}
           tasks={tasks}
-          onCompleteTask={completeTask}
-          onDeleteTask={deleteTask}
+          onCompleteTask={handleCompleteTask}
+          onDeleteTask={handleDeleteTask}
         />
 
         <GlassCard className="p-3 sm:p-4" glow="none">
