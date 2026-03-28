@@ -1,15 +1,18 @@
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit"
-import taskReducer from "./slices/taskSlice"
-import themeReducer from "./slices/themeSlice"
-import { localStorageMiddleware } from "./middleware/localStorageMiddleware"
+import { persistedTaskReducer, persistedThemeReducer } from "./persistConfig"
 
 export const store: EnhancedStore = configureStore({
   reducer: {
-    tasks: taskReducer,
-    theme: themeReducer,
+    tasks: persistedTaskReducer,
+    theme: persistedThemeReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(localStorageMiddleware),
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore redux-persist actions
+        ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
+      },
+    }),
 })
 
 export type RootState = ReturnType<typeof store.getState>

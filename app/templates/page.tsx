@@ -131,32 +131,28 @@ export default function TemplatesPage() {
           className="flex items-center justify-between gap-3"
         >
           <div className="flex items-center gap-2">
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
+            <button
               onClick={() => router.back()}
-              className="liquid-panel rounded-xl p-2"
+              className="liquid-panel rounded-xl p-2 transition-transform duration-200 active:scale-95"
             >
-              <ArrowLeft size={20} weight="bold" className="text-slate-700" />
-            </motion.button>
+              <ArrowLeft size={20} weight="bold" className="text-slate-700 dark:text-slate-300" />
+            </button>
             <div className="flex items-center gap-2">
               <div className="liquid-panel flex size-10 items-center justify-center rounded-2xl">
-                <Lightning size={22} weight="fill" className="text-slate-700" />
+                <Lightning size={22} weight="fill" className="text-slate-700 dark:text-slate-300" />
               </div>
               <h1 className="liquid-title text-2xl font-bold tracking-tight sm:text-3xl">
                 Mẫu Task
               </h1>
             </div>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+          <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="liquid-panel flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800"
+            className="liquid-panel flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 transition-transform duration-200 active:scale-95 dark:text-slate-100"
           >
             <Plus size={18} weight="bold" />
             <span className="hidden sm:inline">Thêm</span>
-          </motion.button>
+          </button>
         </motion.header>
 
         {showAddForm && (
@@ -165,10 +161,10 @@ export default function TemplatesPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <GlassCard variant="strong" className="p-4">
-              <h3 className="mb-3 text-sm font-semibold">Tạo mẫu mới</h3>
+              <h3 className="mb-3 text-sm font-semibold dark:text-slate-100">Tạo mẫu mới</h3>
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="template-name" className="mb-1.5 block text-xs">
+                  <Label htmlFor="template-name" className="mb-1.5 block text-xs dark:text-slate-300">
                     Tên mẫu
                   </Label>
                   <Input
@@ -178,11 +174,11 @@ export default function TemplatesPage() {
                       setNewTemplate({ ...newTemplate, name: e.target.value })
                     }
                     placeholder="VD: Họp team"
-                    className="h-9 rounded-xl"
+                    className="h-9 rounded-xl dark:border-slate-600/60 dark:bg-slate-800/75 dark:text-slate-100"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="template-title" className="mb-1.5 block text-xs">
+                  <Label htmlFor="template-title" className="mb-1.5 block text-xs dark:text-slate-300">
                     Tiêu đề task
                   </Label>
                   <Input
@@ -192,11 +188,11 @@ export default function TemplatesPage() {
                       setNewTemplate({ ...newTemplate, title: e.target.value })
                     }
                     placeholder="VD: Họp team hàng tuần"
-                    className="h-9 rounded-xl"
+                    className="h-9 rounded-xl dark:border-slate-600/60 dark:bg-slate-800/75 dark:text-slate-100"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="template-desc" className="mb-1.5 block text-xs">
+                  <Label htmlFor="template-desc" className="mb-1.5 block text-xs dark:text-slate-300">
                     Mô tả
                   </Label>
                   <Textarea
@@ -207,19 +203,19 @@ export default function TemplatesPage() {
                     }
                     placeholder="Mô tả chi tiết..."
                     rows={2}
-                    className="rounded-xl"
+                    className="rounded-xl dark:border-slate-600/60 dark:bg-slate-800/75 dark:text-slate-100"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => setShowAddForm(false)}
-                    className="rounded-xl border border-slate-300/60 bg-white/78 px-3 py-2 text-sm font-semibold text-slate-700"
+                    className="rounded-xl border border-slate-300/60 bg-white/78 px-3 py-2 text-sm font-semibold text-slate-700 dark:border-slate-600/60 dark:bg-slate-800/78 dark:text-slate-200"
                   >
                     Hủy
                   </button>
                   <button
                     onClick={handleAddTemplate}
-                    className="rounded-xl border border-emerald-400/70 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700"
+                    className="rounded-xl border border-emerald-400/70 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700 dark:border-emerald-500/60 dark:bg-emerald-900/30 dark:text-emerald-300"
                   >
                     Lưu
                   </button>
@@ -240,18 +236,18 @@ export default function TemplatesPage() {
               <GlassCard className="group relative p-4 transition-all hover:shadow-lg">
                 <button
                   onClick={() => handleDeleteTemplate(template.id)}
-                  className="absolute right-2 top-2 rounded-lg p-1.5 opacity-0 transition-opacity hover:bg-red-100 group-hover:opacity-100"
+                  className="absolute right-2 top-2 rounded-lg p-1.5 opacity-0 transition-opacity hover:bg-red-100 group-hover:opacity-100 dark:hover:bg-red-900/30"
                 >
-                  <Trash size={14} className="text-red-600" />
+                  <Trash size={14} className="text-red-600 dark:text-red-400" />
                 </button>
 
-                <h3 className="mb-1 pr-8 text-sm font-bold text-slate-800">
+                <h3 className="mb-1 pr-8 text-sm font-bold text-slate-800 dark:text-slate-100">
                   {template.name}
                 </h3>
-                <p className="mb-3 text-xs text-slate-600">{template.title}</p>
+                <p className="mb-3 text-xs text-slate-600 dark:text-slate-400">{template.title}</p>
 
                 {template.description && (
-                  <p className="mb-3 line-clamp-2 text-xs text-slate-500">
+                  <p className="mb-3 line-clamp-2 text-xs text-slate-500 dark:text-slate-400">
                     {template.description}
                   </p>
                 )}
@@ -262,13 +258,13 @@ export default function TemplatesPage() {
                       className={cn(
                         "rounded-lg px-2 py-1 text-[10px] font-medium",
                         template.category === "work" &&
-                          "bg-sky-100 text-sky-700",
+                          "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300",
                         template.category === "personal" &&
-                          "bg-indigo-100 text-indigo-700",
+                          "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300",
                         template.category === "health" &&
-                          "bg-emerald-100 text-emerald-700",
+                          "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
                         template.category === "other" &&
-                          "bg-slate-100 text-slate-700"
+                          "bg-slate-100 text-slate-700 dark:bg-slate-700/30 dark:text-slate-300"
                       )}
                     >
                       {template.category === "work" && "Công việc"}
@@ -278,7 +274,7 @@ export default function TemplatesPage() {
                     </span>
                   )}
                   {template.estimatedTime && (
-                    <span className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-700">
+                    <span className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-700 dark:bg-slate-700/30 dark:text-slate-300">
                       {template.estimatedTime}
                     </span>
                   )}
@@ -286,7 +282,7 @@ export default function TemplatesPage() {
 
                 <button
                   onClick={() => handleUseTemplate(template)}
-                  className="w-full rounded-lg border border-slate-300/60 bg-white/90 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-white"
+                  className="w-full rounded-lg border border-slate-300/60 bg-white/90 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-white dark:border-slate-600/60 dark:bg-slate-800/90 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                   Sử dụng mẫu
                 </button>
@@ -297,9 +293,9 @@ export default function TemplatesPage() {
 
         {templates.length === 0 && (
           <GlassCard className="p-8 text-center">
-            <Lightning size={42} className="mx-auto text-slate-400" weight="duotone" />
-            <p className="mt-3 text-base text-slate-700">Chưa có mẫu nào</p>
-            <p className="mt-1 text-sm text-slate-500">
+            <Lightning size={42} className="mx-auto text-slate-400 dark:text-slate-500" weight="duotone" />
+            <p className="mt-3 text-base text-slate-700 dark:text-slate-300">Chưa có mẫu nào</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Nhấn nút &quot;Thêm&quot; để tạo mẫu task
             </p>
           </GlassCard>

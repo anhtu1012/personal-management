@@ -8,7 +8,8 @@ import { SearchBar } from "@/components/ui/search-bar"
 import { SwipeableTask } from "@/components/ui/swipeable-task"
 import { TaskDetailModal } from "@/components/ui/task-detail-modal"
 import { Textarea } from "@/components/ui/textarea"
-import { useTaskContext } from "@/contexts/TaskContext"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { addTask, completeTask, deleteTask } from "@/store/slices/taskSlice"
 import { notifications } from "@/lib/notifications"
 import { cn } from "@/lib/utils"
 import { Task } from "@/types"
@@ -19,7 +20,9 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useMemo, useState } from "react"
 
 export default function HomePage() {
-  const { tasks, loading, addTask, completeTask, deleteTask } = useTaskContext()
+  const dispatch = useAppDispatch()
+  const tasks = useAppSelector((state) => state.tasks.tasks)
+  const loading = useAppSelector((state) => state.tasks.loading)
   const [showQuickAdd, setShowQuickAdd] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
@@ -36,7 +39,7 @@ export default function HomePage() {
 
     if (searchQuery) {
       result = result.filter(
-        (task) =>
+        (task: Task) =>
           task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           task.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           task.tags?.some((tag) =>
@@ -50,8 +53,8 @@ export default function HomePage() {
 
   const todayTasks = useMemo(() => {
     return filteredTasks
-      .filter((task) => task.date === selectedDateStr && !task.completed)
-      .sort((a, b) => {
+      .filter((task: Task) => task.date === selectedDateStr && !task.completed)
+      .sort((a: Task, b: Task) => {
         if (a.priority && b.priority) {
           const priorityOrder = { high: 0, medium: 1, low: 2 }
           if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
@@ -64,7 +67,7 @@ export default function HomePage() {
 
   const completedToday = useMemo(() => {
     return filteredTasks.filter(
-      (task) => task.date === selectedDateStr && task.completed
+      (task: Task) => task.date === selectedDateStr && task.completed
     ).length
   }, [filteredTasks, selectedDateStr])
 
@@ -79,7 +82,7 @@ export default function HomePage() {
     e.preventDefault()
     if (!title.trim()) return
 
-    const newTask = addTask({
+    dispatch(addTask({
       title,
       description,
       date: selectedDateStr,
@@ -87,10 +90,10 @@ export default function HomePage() {
       category,
       completed: false,
       delayed: false,
-    })
+    }))
 
     // Schedule notification if time is set
-    if (time && newTask) {
+    if (time) {
       const taskDateTime = `${selectedDateStr}T${time}`
       const hasPermission = await notifications.requestPermission()
       if (hasPermission) {
@@ -127,8 +130,9 @@ export default function HomePage() {
         <div className="w-full max-w-full overflow-hidden">
           <section className="w-full space-y-3 sm:space-y-5">
             <motion.header
-              initial={{ opacity: 0, y: -14 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
               className="w-full"
             >
               <div className="mb-1.5 flex items-center gap-2 sm:mb-2 sm:gap-2.5">
@@ -188,7 +192,7 @@ export default function HomePage() {
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progressValue}%` }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
                     className="h-full rounded-full bg-linear-to-r from-zinc-100 via-zinc-300 to-zinc-500 dark:from-zinc-700 dark:via-zinc-500 dark:to-zinc-300"
                   />
                 </div>
@@ -206,16 +210,14 @@ export default function HomePage() {
                     {format(new Date(), "dd MMMM", { locale: vi })}
                   </h2>
                   <div className="flex shrink-0 items-center gap-2">
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
+                    <button
                       onClick={() => setShowQuickAdd((prev) => !prev)}
-                      className="liquid-panel flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-800 dark:text-slate-100 sm:gap-2 sm:rounded-2xl sm:px-3 sm:text-sm"
+                      className="liquid-panel flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-800 transition-transform duration-200 active:scale-95 dark:text-slate-100 sm:gap-2 sm:rounded-2xl sm:px-3 sm:text-sm"
                     >
                       <Plus size={16} weight="bold" className="sm:hidden dark:text-slate-100" />
                       <Plus size={18} weight="bold" className="hidden sm:block dark:text-slate-100" />
                       <span>{showQuickAdd ? "Đóng" : "Thêm"}</span>
-                    </motion.button>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -228,15 +230,17 @@ export default function HomePage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
                       onClick={() => setShowQuickAdd(false)}
                       className="fixed inset-0 z-40 bg-slate-900/25 backdrop-blur-[1px] sm:hidden"
                     />
 
                     <motion.div
                       key="quick-add-mobile"
-                      initial={{ opacity: 0, y: 36 }}
+                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 30 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
                       className="fixed inset-x-0 bottom-20 z-50 px-2 sm:hidden"
                     >
                       <div className="liquid-sheet p-3">
@@ -316,9 +320,10 @@ export default function HomePage() {
 
                     <motion.div
                       key="quick-add-inline"
-                      initial={{ opacity: 0, y: 12 }}
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
                       className="mb-4 hidden sm:block"
                     >
                       <GlassCard
@@ -429,6 +434,7 @@ export default function HomePage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
                     >
                       <GlassCard className="p-6 text-center sm:p-8 md:p-12">
                         <Lightning
@@ -451,18 +457,18 @@ export default function HomePage() {
                     </motion.div>
                   )}
 
-                  {todayTasks.map((task, index) => (
+                  {todayTasks.map((task: Task, index: number) => (
                     <motion.div
                       key={task.id}
-                      initial={{ opacity: 0, x: -16 }}
+                      initial={{ opacity: 0, x: -12 }}
                       animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 16 }}
-                      transition={{ delay: index * 0.04 }}
+                      exit={{ opacity: 0, x: 12 }}
+                      transition={{ delay: index * 0.03, duration: 0.2 }}
                     >
                       <SwipeableTask
                         task={task}
-                        onComplete={() => completeTask(task.id)}
-                        onDelete={() => deleteTask(task.id)}
+                        onComplete={() => dispatch(completeTask(task.id))}
+                        onDelete={() => dispatch(deleteTask(task.id))}
                         onClick={() => setSelectedTask(task)}
                       />
                     </motion.div>
@@ -480,8 +486,8 @@ export default function HomePage() {
           onClose={() => setSelectedTask(null)}
           task={selectedTask}
           allTasks={todayTasks}
-          onComplete={completeTask}
-          onDelete={deleteTask}
+          onComplete={(id) => dispatch(completeTask(id))}
+          onDelete={(id) => dispatch(deleteTask(id))}
           onNavigate={(task) => setSelectedTask(task)}
         />
       )}

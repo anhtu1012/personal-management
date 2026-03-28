@@ -75,19 +75,17 @@ export default function StatisticsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-2 sm:gap-3"
         >
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
+          <button
             onClick={() => router.back()}
-            className="liquid-panel rounded-xl p-2 sm:p-2.5"
+            className="liquid-panel rounded-xl p-2 transition-transform duration-200 active:scale-95 sm:p-2.5"
           >
-            <ArrowLeft size={18} weight="bold" className="text-slate-700 sm:hidden" />
-            <ArrowLeft size={20} weight="bold" className="hidden text-slate-700 sm:block" />
-          </motion.button>
+            <ArrowLeft size={18} weight="bold" className="text-slate-700 dark:text-slate-300 sm:hidden" />
+            <ArrowLeft size={20} weight="bold" className="hidden text-slate-700 dark:text-slate-300 sm:block" />
+          </button>
           <div className="flex items-center gap-2">
             <div className="liquid-panel flex size-8 items-center justify-center rounded-xl sm:size-10 sm:rounded-2xl">
-              <ChartBar size={18} weight="fill" className="text-slate-700 sm:hidden" />
-              <ChartBar size={22} weight="fill" className="hidden text-slate-700 sm:block" />
+              <ChartBar size={18} weight="fill" className="text-slate-700 dark:text-slate-300 sm:hidden" />
+              <ChartBar size={22} weight="fill" className="hidden text-slate-700 dark:text-slate-300 sm:block" />
             </div>
             <h1 className="liquid-title text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
               Thống kê
@@ -97,61 +95,61 @@ export default function StatisticsPage() {
 
         <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4">
           <GlassCard className="p-3 sm:p-4" glow="none">
-            <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-600">
+            <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
               <Target size={14} weight="bold" />
               <span>Tổng</span>
             </div>
-            <p className="text-2xl font-bold sm:text-3xl">{stats.totalTasks}</p>
+            <p className="text-2xl font-bold dark:text-slate-100 sm:text-3xl">{stats.totalTasks}</p>
           </GlassCard>
 
           <GlassCard className="p-3 sm:p-4" glow="none">
-            <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-600">
+            <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
               <TrendUp size={14} weight="bold" />
               <span>Hoàn thành</span>
             </div>
-            <p className="text-2xl font-bold text-emerald-600 sm:text-3xl">
+            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 sm:text-3xl">
               {stats.completedTasks}
             </p>
           </GlassCard>
 
           <GlassCard className="p-3 sm:p-4" glow="none">
-            <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-600">
+            <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
               <Fire size={14} weight="fill" />
               <span>Streak</span>
             </div>
-            <p className="text-2xl font-bold text-orange-600 sm:text-3xl">
+            <p className="text-2xl font-bold text-orange-600 dark:text-orange-400 sm:text-3xl">
               {stats.currentStreak}
             </p>
           </GlassCard>
 
           <GlassCard className="p-3 sm:p-4" glow="none">
-            <div className="mb-1 text-xs text-slate-600">Tỷ lệ</div>
-            <p className="text-2xl font-bold text-sky-600 sm:text-3xl">
+            <div className="mb-1 text-xs text-slate-600 dark:text-slate-400">Tỷ lệ</div>
+            <p className="text-2xl font-bold text-sky-600 dark:text-sky-400 sm:text-3xl">
               {stats.completionRate}%
             </p>
           </GlassCard>
         </div>
 
         <GlassCard variant="strong" className="p-4 sm:p-5" glow="none">
-          <h3 className="mb-3 text-sm font-semibold sm:text-base">
+          <h3 className="mb-3 text-sm font-semibold dark:text-slate-100 sm:text-base">
             Hoàn thành 7 ngày qua
           </h3>
           <div className="flex items-end justify-between gap-2">
             {stats.completedByDay.map((day, i) => (
               <div key={i} className="flex flex-1 flex-col items-center gap-2">
                 <div className="relative w-full">
-                  <div className="h-32 w-full rounded-t-lg bg-slate-200/50" />
+                  <div className="h-32 w-full rounded-t-lg bg-slate-200/50 dark:bg-slate-700/50" />
                   <motion.div
                     initial={{ height: 0 }}
                     animate={{ height: `${(day.count / maxCount) * 100}%` }}
                     transition={{ delay: i * 0.1, duration: 0.5 }}
-                    className="absolute bottom-0 w-full rounded-t-lg bg-gradient-to-t from-sky-500 to-indigo-500"
+                    className="absolute bottom-0 w-full rounded-t-lg bg-linear-to-t from-sky-500 to-indigo-500 dark:from-sky-600 dark:to-indigo-600"
                   />
-                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-slate-700">
+                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-slate-700 dark:text-slate-200">
                     {day.count}
                   </span>
                 </div>
-                <span className="text-xs text-slate-600">{day.date}</span>
+                <span className="text-xs text-slate-600 dark:text-slate-400">{day.date}</span>
               </div>
             ))}
           </div>
@@ -159,7 +157,7 @@ export default function StatisticsPage() {
 
         <div className="grid gap-3 sm:grid-cols-2">
           <GlassCard variant="strong" className="p-4" glow="none">
-            <h3 className="mb-3 text-sm font-semibold">Theo danh mục</h3>
+            <h3 className="mb-3 text-sm font-semibold dark:text-slate-100">Theo danh mục</h3>
             <div className="space-y-2">
               {Object.entries(stats.byCategory).map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between">
@@ -173,21 +171,21 @@ export default function StatisticsPage() {
                         key === "other" && "bg-slate-500"
                       )}
                     />
-                    <span className="text-sm text-slate-700">
+                    <span className="text-sm text-slate-700 dark:text-slate-300">
                       {key === "work" && "Công việc"}
                       {key === "personal" && "Cá nhân"}
                       {key === "health" && "Sức khỏe"}
                       {key === "other" && "Khác"}
                     </span>
                   </div>
-                  <span className="text-sm font-bold">{value}</span>
+                  <span className="text-sm font-bold dark:text-slate-100">{value}</span>
                 </div>
               ))}
             </div>
           </GlassCard>
 
           <GlassCard variant="strong" className="p-4" glow="none">
-            <h3 className="mb-3 text-sm font-semibold">Theo ưu tiên</h3>
+            <h3 className="mb-3 text-sm font-semibold dark:text-slate-100">Theo ưu tiên</h3>
             <div className="space-y-2">
               {Object.entries(stats.byPriority).map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between">
@@ -200,13 +198,13 @@ export default function StatisticsPage() {
                         key === "low" && "bg-blue-500"
                       )}
                     />
-                    <span className="text-sm text-slate-700">
+                    <span className="text-sm text-slate-700 dark:text-slate-300">
                       {key === "high" && "Cao"}
                       {key === "medium" && "Trung bình"}
                       {key === "low" && "Thấp"}
                     </span>
                   </div>
-                  <span className="text-sm font-bold">{value}</span>
+                  <span className="text-sm font-bold dark:text-slate-100">{value}</span>
                 </div>
               ))}
             </div>

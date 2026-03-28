@@ -21,13 +21,18 @@ const taskSlice = createSlice({
       state.tasks = action.payload
       state.loading = false
     },
-    addTask: (state, action: PayloadAction<Task>) => {
-      state.tasks.push(action.payload)
+    addTask: (state, action: PayloadAction<Omit<Task, "id">>) => {
+      const newTask: Task = {
+        ...action.payload,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
+      }
+      state.tasks.push(newTask)
     },
-    updateTask: (state, action: PayloadAction<Task>) => {
+    updateTask: (state, action: PayloadAction<{ id: string; updates: Partial<Task> }>) => {
       const index = state.tasks.findIndex((t) => t.id === action.payload.id)
       if (index !== -1) {
-        state.tasks[index] = action.payload
+        state.tasks[index] = { ...state.tasks[index], ...action.payload.updates }
       }
     },
     deleteTask: (state, action: PayloadAction<string>) => {
@@ -37,6 +42,17 @@ const taskSlice = createSlice({
       const task = state.tasks.find((t) => t.id === action.payload)
       if (task) {
         task.completed = true
+        task.delayed = false
+        task.completedAt = new Date().toISOString()
+      }
+    },
+    delayTask: (state, action: PayloadAction<string>) => {
+      const task = state.tasks.find((t) => t.id === action.payload)
+      if (task) {
+        const tomorrow = new Date(task.date)
+        tomorrow.setDate(tomorrow.getDate() + 1)
+        task.date = tomorrow.toISOString().split("T")[0]
+        task.delayed = true
       }
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
@@ -55,6 +71,7 @@ export const {
   updateTask,
   deleteTask,
   completeTask,
+  delayTask,
   setLoading,
   setError,
 } = taskSlice.actions

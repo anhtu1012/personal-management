@@ -19,7 +19,8 @@ import { Label } from "@/components/ui/label"
 import { Navigation } from "@/components/ui/navigation"
 import { Textarea } from "@/components/ui/textarea"
 import { TagInput } from "@/components/ui/tag-input"
-import { useTasks } from "@/hooks/use-tasks"
+import { useAppDispatch } from "@/store/hooks"
+import { addTask } from "@/store/slices/taskSlice"
 import { Task, Priority, RecurringType } from "@/types"
 import { cn } from "@/lib/utils"
 import { notifications } from "@/lib/notifications"
@@ -27,7 +28,7 @@ import { notifications } from "@/lib/notifications"
 function CreateTaskForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { addTask } = useTasks()
+  const dispatch = useAppDispatch()
 
   const initialDate =
     searchParams.get("date") || new Date().toISOString().split("T")[0]
@@ -46,7 +47,7 @@ function CreateTaskForm() {
     e.preventDefault()
     if (!title.trim()) return
 
-    const newTask = addTask({
+    dispatch(addTask({
       title,
       description,
       date,
@@ -58,10 +59,10 @@ function CreateTaskForm() {
       recurringEndDate: recurring !== "none" ? recurringEndDate : undefined,
       completed: false,
       delayed: false,
-    })
+    }))
 
     // Schedule notification if time is set
-    if (time && newTask) {
+    if (time) {
       const taskDateTime = `${date}T${time}`
       const hasPermission = await notifications.requestPermission()
       if (hasPermission) {

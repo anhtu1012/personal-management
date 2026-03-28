@@ -93,7 +93,7 @@ export function TaskDetailModal({
   const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center sm:justify-center">
+        <div className="fixed inset-0 z-9999 flex items-end sm:items-center sm:justify-center">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -109,7 +109,7 @@ export function TaskDetailModal({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="relative z-10 w-full sm:mx-4 sm:max-w-2xl"
+            className="relative z-10 w-full sm:mx-4 sm:max-w-2xl lg:max-w-3xl xl:max-w-4xl"
           >
             <motion.div
               drag="x"
@@ -118,23 +118,23 @@ export function TaskDetailModal({
               dragMomentum={false}
               onDragEnd={handleDragEnd}
               style={{ x, opacity, scale }}
-              className="glass-strong overflow-hidden rounded-t-3xl shadow-2xl sm:rounded-3xl"
+              className="glass-strong overflow-hidden rounded-t-3xl shadow-2xl will-change-transform sm:rounded-3xl"
             >
               {/* Header with liquid glass */}
-              <div className="liquid-panel relative border-b border-slate-300/40 px-5 py-4 dark:border-slate-600/40">
+              <div className="liquid-panel relative border-b border-slate-300/40 px-4 py-3 dark:border-slate-600/40 sm:px-5 sm:py-4 lg:px-6 lg:py-5">
                 {/* Swipe Indicator */}
-                <div className="mb-3 flex justify-center sm:hidden">
+                <div className="mb-2 flex justify-center sm:hidden">
                   <div className="h-1 w-12 rounded-full bg-slate-400/60 dark:bg-slate-500/60" />
                 </div>
 
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="mb-1 flex items-center gap-2">
-                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 sm:text-sm">
                         Task {currentIndex + 1} / {allTasks.length}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-500">
+                    <div className="hidden items-center gap-3 text-xs text-slate-500 dark:text-slate-500 sm:flex">
                       {hasPrev && <span>← Vuốt sang phải</span>}
                       {hasNext && <span>Vuốt sang trái →</span>}
                     </div>
@@ -142,15 +142,16 @@ export function TaskDetailModal({
 
                   <button
                     onClick={onClose}
-                    className="liquid-chip flex h-9 w-9 items-center justify-center rounded-xl transition-all hover:scale-105"
+                    className="liquid-chip flex h-8 w-8 items-center justify-center rounded-xl transition-all hover:scale-105 sm:h-9 sm:w-9"
                   >
-                    <X size={20} weight="bold" className="text-slate-700 dark:text-slate-300" />
+                    <X size={18} weight="bold" className="text-slate-700 dark:text-slate-300 sm:hidden" />
+                    <X size={20} weight="bold" className="hidden text-slate-700 dark:text-slate-300 sm:block" />
                   </button>
                 </div>
               </div>
 
               {/* Content with liquid glass background */}
-              <div className="max-h-[60vh] overflow-y-auto p-5 sm:max-h-[70vh] sm:p-6">
+              <div className="max-h-[60vh] overflow-y-auto p-4 sm:max-h-[65vh] sm:p-5 lg:max-h-[70vh] lg:p-6 xl:max-h-[75vh]">
                 {/* Category & Status */}
                 <div className="mb-4 flex flex-wrap items-center gap-2">
                   <div
@@ -199,7 +200,7 @@ export function TaskDetailModal({
 
                 {/* Title */}
                 <h2 className={cn(
-                  "mb-4 text-xl font-bold leading-tight text-slate-800 dark:text-slate-100 sm:text-2xl",
+                  "mb-4 text-xl font-bold leading-tight text-slate-800 dark:text-slate-100 sm:text-2xl lg:text-3xl",
                   currentTask.completed && "line-through opacity-60"
                 )}>
                   {currentTask.title}
@@ -207,11 +208,11 @@ export function TaskDetailModal({
 
                 {/* Description */}
                 {currentTask.description && (
-                  <div className="glass mb-5 rounded-2xl p-4">
-                    <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
+                  <div className="glass mb-5 rounded-2xl p-4 lg:p-5">
+                    <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400 sm:text-sm">
                       Mô tả
                     </h3>
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-300 sm:text-base">
                       {currentTask.description}
                     </p>
                   </div>
@@ -220,23 +221,23 @@ export function TaskDetailModal({
                 {/* Details */}
                 <div className="mb-4 space-y-3">
                   {/* Date & Time */}
-                  <div className="flex flex-wrap gap-3">
-                    <div className="glass flex-1 rounded-xl p-3">
+                  <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+                    <div className="glass rounded-xl p-3 lg:p-4">
                       <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
                         Ngày
                       </div>
-                      <div className="text-base font-semibold text-slate-800 dark:text-slate-100">
+                      <div className="text-base font-semibold text-slate-800 dark:text-slate-100 lg:text-lg">
                         {format(new Date(currentTask.date), "dd/MM/yyyy")}
                       </div>
                     </div>
 
                     {currentTask.time && (
-                      <div className="glass flex-1 rounded-xl p-3">
+                      <div className="glass rounded-xl p-3 lg:p-4">
                         <div className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
                           <Clock size={12} weight="bold" />
                           Giờ
                         </div>
-                        <div className="text-base font-semibold text-slate-800 dark:text-slate-100">
+                        <div className="text-base font-semibold text-slate-800 dark:text-slate-100 lg:text-lg">
                           {currentTask.time}
                         </div>
                       </div>
@@ -245,12 +246,12 @@ export function TaskDetailModal({
 
                   {/* Recurring */}
                   {currentTask.recurring && currentTask.recurring !== "none" && (
-                    <div className="glass rounded-xl border border-purple-300/50 bg-purple-100/30 p-3 dark:border-purple-500/50 dark:bg-purple-900/20">
+                    <div className="glass rounded-xl border border-purple-300/50 bg-purple-100/30 p-3 dark:border-purple-500/50 dark:bg-purple-900/20 lg:p-4">
                       <div className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-purple-700 dark:text-purple-400">
                         <ArrowsClockwise size={12} weight="bold" />
                         Lặp lại
                       </div>
-                      <div className="text-base font-semibold text-purple-800 dark:text-purple-300">
+                      <div className="text-base font-semibold text-purple-800 dark:text-purple-300 lg:text-lg">
                         {currentTask.recurring === "daily" && "Hàng ngày"}
                         {currentTask.recurring === "weekly" && "Hàng tuần"}
                         {currentTask.recurring === "monthly" && "Hàng tháng"}
@@ -262,7 +263,7 @@ export function TaskDetailModal({
                 {/* Tags */}
                 {currentTask.tags && currentTask.tags.length > 0 && (
                   <div className="mb-4">
-                    <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
+                    <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400 sm:text-sm">
                       <Tag size={14} weight="bold" />
                       Tags
                     </h3>
@@ -281,11 +282,11 @@ export function TaskDetailModal({
 
                 {/* Notes */}
                 {currentTask.notes && (
-                  <div className="glass rounded-2xl p-4">
-                    <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
+                  <div className="glass rounded-2xl p-4 lg:p-5">
+                    <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400 sm:text-sm">
                       Ghi chú
                     </h3>
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-300 sm:text-base">
                       {currentTask.notes}
                     </p>
                   </div>
@@ -293,25 +294,25 @@ export function TaskDetailModal({
               </div>
 
               {/* Footer Actions with liquid glass */}
-              <div className="liquid-panel flex gap-3 border-t border-slate-300/40 px-5 py-4 dark:border-slate-600/40">
+              <div className="liquid-panel flex gap-2 border-t border-slate-300/40 px-4 py-3 dark:border-slate-600/40 sm:gap-3 sm:px-5 sm:py-4 lg:px-6 lg:py-5">
                 {!currentTask.completed && (
-                  <motion.button
-                    whileTap={{ scale: 0.97 }}
+                  <button
                     onClick={handleComplete}
-                    className="glass-strong flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-400/50 bg-emerald-50/50 px-4 py-3 font-semibold text-emerald-700 transition hover:scale-105 dark:border-emerald-500/40 dark:bg-emerald-900/30 dark:text-emerald-300"
+                    className="glass-strong flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-400/50 bg-emerald-50/50 px-3 py-2.5 font-semibold text-emerald-700 transition-transform hover:scale-[1.02] active:scale-[0.98] dark:border-emerald-500/40 dark:bg-emerald-900/30 dark:text-emerald-300 sm:px-4 sm:py-3"
                   >
-                    <CheckCircle size={20} weight="bold" />
+                    <CheckCircle size={18} weight="bold" className="sm:hidden" />
+                    <CheckCircle size={20} weight="bold" className="hidden sm:block" />
                     <span className="text-sm sm:text-base">Hoàn thành</span>
-                  </motion.button>
+                  </button>
                 )}
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
+                <button
                   onClick={handleDelete}
-                  className="glass-strong flex items-center justify-center gap-2 rounded-xl border border-red-400/50 bg-red-50/50 px-4 py-3 font-semibold text-red-700 transition hover:scale-105 dark:border-red-500/40 dark:bg-red-900/30 dark:text-red-300"
+                  className="glass-strong flex items-center justify-center gap-2 rounded-xl border border-red-400/50 bg-red-50/50 px-3 py-2.5 font-semibold text-red-700 transition-transform hover:scale-[1.02] active:scale-[0.98] dark:border-red-500/40 dark:bg-red-900/30 dark:text-red-300 sm:px-4 sm:py-3"
                 >
-                  <Trash size={20} weight="bold" />
+                  <Trash size={18} weight="bold" className="sm:hidden" />
+                  <Trash size={20} weight="bold" className="hidden sm:block" />
                   <span className="text-sm sm:text-base">Xóa</span>
-                </motion.button>
+                </button>
               </div>
             </motion.div>
           </motion.div>

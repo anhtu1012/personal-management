@@ -31,15 +31,13 @@ export function Navigation() {
 
                 if (link.type === "button") {
                   return (
-                    <motion.button
+                    <button
                       key={link.label}
                       onClick={() => setShowQuickAdd(true)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="relative flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 py-2 transition-colors sm:min-h-[3.6rem] sm:gap-1 sm:px-4"
+                      className="relative flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 py-2 transition-transform duration-200 active:scale-95 sm:min-h-[3.6rem] sm:gap-1 sm:px-4"
                     >
-                      <div className="absolute inset-0 rounded-2xl border border-sky-400/50 bg-gradient-to-br from-white/90 via-sky-50/60 to-cyan-50/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_22px_rgba(56,189,248,0.2)] backdrop-blur-xl dark:border-sky-500/40 dark:from-slate-700/80 dark:via-sky-900/40 dark:to-cyan-900/30 dark:shadow-[inset_0_1px_0_rgba(148,163,184,0.15),0_8px_22px_rgba(56,189,248,0.25)]" />
-                      <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-cyan-500 shadow-lg dark:from-sky-600 dark:to-cyan-600 sm:h-9 sm:w-9">
+                      <div className="absolute inset-0 rounded-2xl border border-sky-400/50 bg-linear-to-br from-white/90 via-sky-50/60 to-cyan-50/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_22px_rgba(56,189,248,0.2)] backdrop-blur-xl dark:border-sky-500/40 dark:from-slate-700/80 dark:via-sky-900/40 dark:to-cyan-900/30 dark:shadow-[inset_0_1px_0_rgba(148,163,184,0.15),0_8px_22px_rgba(56,189,248,0.25)]" />
+                      <div className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-sky-500 to-cyan-500 shadow-lg dark:from-sky-600 dark:to-cyan-600 sm:h-9 sm:w-9">
                         <Icon
                           size={20}
                           weight="bold"
@@ -54,7 +52,7 @@ export function Navigation() {
                       <span className="relative z-10 text-[10px] font-bold text-sky-700 dark:text-sky-300 sm:text-xs">
                         {link.label}
                       </span>
-                    </motion.button>
+                    </button>
                   )
                 }
 

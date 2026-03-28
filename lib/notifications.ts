@@ -19,19 +19,50 @@ export const notifications = {
 
   show: (title: string, options?: NotificationOptions) => {
     if (Notification.permission === "granted") {
-      const notification = new Notification(title, {
-        icon: "/image/logo.png",
-        badge: "/image/logo.png",
-        requireInteraction: true, // Keep notification until user interacts
-        ...options,
-      })
+      // Try to use Service Worker notification first (better for Android)
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.showNotification(title, {
+            icon: "/image/logo.png",
+            badge: "/image/logo.png",
+            requireInteraction: true,
+            tag: options?.tag || 'task-reminder',
+            ...options,
+          }).then(() => {
+            // Vibrate after showing notification
+            if ("vibrate" in navigator) {
+              navigator.vibrate([200, 100, 200])
+            }
+          })
+        }).catch(() => {
+          // Fallback to regular notification
+          const notification = new Notification(title, {
+            icon: "/image/logo.png",
+            badge: "/image/logo.png",
+            requireInteraction: true,
+            ...options,
+          })
+          
+          if ("vibrate" in navigator) {
+            navigator.vibrate([200, 100, 200])
+          }
+        })
+      } else {
+        // Fallback to regular notification
+        const notification = new Notification(title, {
+          icon: "/image/logo.png",
+          badge: "/image/logo.png",
+          requireInteraction: true,
+          ...options,
+        })
 
-      // Vibrate on mobile if supported
-      if ("vibrate" in navigator) {
-        navigator.vibrate([200, 100, 200])
+        // Vibrate on mobile if supported
+        if ("vibrate" in navigator) {
+          navigator.vibrate([200, 100, 200])
+        }
+
+        return notification
       }
-
-      return notification
     }
   },
 
@@ -40,7 +71,7 @@ export const notifications = {
     const taskDate = new Date(taskDateTime)
     const timeDiff = taskDate.getTime() - now.getTime()
 
-    // Schedule for any future task (removed 24h limit)
+    // Schedule for any future task
     if (timeDiff > 0) {
       // Store in localStorage for persistence
       const reminders = getStoredReminders()
@@ -53,40 +84,23 @@ export const notifications = {
       reminders.push(newReminder)
       localStorage.setItem("task_reminders", JSON.stringify(reminders))
 
-      // Try to use Service Worker for background notification
-      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({
-          type: 'SCHEDULE_NOTIFICATION',
-          title: taskTitle,
-          body: taskTitle,
-          time: taskDateTime,
-          id: newReminder.id,
-        })
-      }
-
-      // Schedule the notification in main thread
-      // For tasks > 24h, we'll reschedule on next app load
+      // Schedule the notification
       const maxTimeout = 2147483647 // Max setTimeout value (~24.8 days)
       const scheduleTime = Math.min(timeDiff, maxTimeout)
       
       setTimeout(() => {
-        // Check if service worker already showed it
+        // Check if reminder still exists
         const currentReminders = getStoredReminders()
         const stillExists = currentReminders.find(r => r.id === newReminder.id)
         
         if (stillExists) {
-          const notification = notifications.show("⏰ Nhắc nhở Task", {
+          notifications.show("⏰ Nhắc nhở Task", {
             body: taskTitle,
-            tag: taskDateTime,
+            tag: `task-${newReminder.id}`,
             icon: "/image/logo.png",
             badge: "/image/logo.png",
             requireInteraction: true,
           })
-
-          // Vibrate on mobile
-          if ("vibrate" in navigator) {
-            navigator.vibrate([200, 100, 200])
-          }
 
           // Remove from stored reminders after showing
           const updatedReminders = getStoredReminders().filter(
@@ -109,22 +123,17 @@ export const notifications = {
 
       if (timeDiff > 0) {
         // Schedule for any future task
-        const maxTimeout = 2147483647 // Max setTimeout value
+        const maxTimeout = 2147483647
         const scheduleTime = Math.min(timeDiff, maxTimeout)
         
         setTimeout(() => {
-          const notification = notifications.show("⏰ Nhắc nhở Task", {
+          notifications.show("⏰ Nhắc nhở Task", {
             body: reminder.title,
-            tag: reminder.time,
+            tag: `task-${reminder.id}`,
             icon: "/image/logo.png",
             badge: "/image/logo.png",
             requireInteraction: true,
           })
-
-          // Vibrate on mobile
-          if ("vibrate" in navigator) {
-            navigator.vibrate([200, 100, 200])
-          }
 
           // Remove from stored reminders
           const updatedReminders = getStoredReminders().filter(

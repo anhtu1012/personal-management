@@ -95,21 +95,19 @@ export default function ProfilePage() {
         >
           <div className="flex items-center gap-3">
             <div className="liquid-panel flex size-10 items-center justify-center rounded-2xl">
-              <User size={22} weight="fill" className="text-slate-700" />
+              <User size={22} weight="fill" className="text-slate-700 dark:text-slate-300" />
             </div>
             <h1 className="liquid-title text-3xl font-bold tracking-tight sm:text-4xl">
               Hồ Sơ
             </h1>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+          <button
             onClick={() => router.push("/statistics")}
-            className="liquid-panel flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800"
+            className="liquid-panel flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 transition-transform duration-200 active:scale-95 dark:text-slate-100"
           >
             <ChartBar size={18} weight="bold" />
             <span className="hidden sm:inline">Thống kê</span>
-          </motion.button>
+          </button>
         </motion.header>
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
@@ -121,14 +119,14 @@ export default function ProfilePage() {
               <GlassCard variant="strong" className="p-4 sm:p-6" glow="none">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   <div className="relative mx-auto sm:mx-0">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-slate-300/60 bg-linear-to-br from-white via-sky-50 to-indigo-100 shadow-[0_10px_26px_rgba(15,23,42,0.14)] sm:h-24 sm:w-24">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-slate-300/60 bg-linear-to-br from-white via-sky-50 to-indigo-100 shadow-[0_10px_26px_rgba(15,23,42,0.14)] dark:border-slate-600/60 dark:from-slate-700 dark:via-sky-900/40 dark:to-indigo-900/40 sm:h-24 sm:w-24">
                       <User
                         size={40}
                         weight="bold"
-                        className="text-slate-800"
+                        className="text-slate-800 dark:text-slate-100"
                       />
                     </div>
-                    <div className="absolute -right-1 -bottom-1 flex size-7 items-center justify-center rounded-full border-2 border-white bg-slate-200 text-slate-700 sm:size-8">
+                    <div className="absolute -right-1 -bottom-1 flex size-7 items-center justify-center rounded-full border-2 border-white bg-slate-200 text-slate-700 dark:border-slate-800 dark:bg-slate-700 dark:text-slate-300 sm:size-8">
                       <Fire size={14} weight="fill" />
                     </div>
                   </div>
@@ -139,7 +137,7 @@ export default function ProfilePage() {
                         <div>
                           <Label
                             htmlFor="name"
-                            className="text-sm text-slate-700"
+                            className="text-sm text-slate-700 dark:text-slate-300"
                           >
                             Tên
                           </Label>
@@ -152,13 +150,13 @@ export default function ProfilePage() {
                                 name: e.target.value,
                               })
                             }
-                            className="mt-1 h-10 rounded-xl border-slate-300/60 bg-white/75"
+                            className="mt-1 h-10 rounded-xl border-slate-300/60 bg-white/75 dark:border-slate-600/60 dark:bg-slate-800/75 dark:text-slate-100"
                           />
                         </div>
                         <div>
                           <Label
                             htmlFor="email"
-                            className="text-sm text-slate-700"
+                            className="text-sm text-slate-700 dark:text-slate-300"
                           >
                             Email
                           </Label>
@@ -172,16 +170,16 @@ export default function ProfilePage() {
                                 email: e.target.value,
                               })
                             }
-                            className="mt-1 h-10 rounded-xl border-slate-300/60 bg-white/75"
+                            className="mt-1 h-10 rounded-xl border-slate-300/60 bg-white/75 dark:border-slate-600/60 dark:bg-slate-800/75 dark:text-slate-100"
                             placeholder="email@example.com"
                           />
                         </div>
                       </div>
                     ) : (
                       <>
-                        <h2 className="text-2xl font-bold">{profile.name}</h2>
+                        <h2 className="text-2xl font-bold dark:text-slate-100">{profile.name}</h2>
                         {profile.email && (
-                          <p className="mt-1 text-sm text-slate-600">
+                          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                             {profile.email}
                           </p>
                         )}
@@ -189,7 +187,7 @@ export default function ProfilePage() {
                           <span className="liquid-chip px-3 py-1 text-xs font-semibold">
                             {stats.completionRate}% hoàn thành
                           </span>
-                          <span className="rounded-full border border-slate-300/55 bg-white/72 px-3 py-1 text-xs font-semibold text-slate-700">
+                          <span className="rounded-full border border-slate-300/55 bg-white/72 px-3 py-1 text-xs font-semibold text-slate-700 dark:border-slate-600/55 dark:bg-slate-800/72 dark:text-slate-300">
                             {stats.total} tasks
                           </span>
                         </div>
@@ -203,13 +201,13 @@ export default function ProfilePage() {
                     <>
                       <button
                         onClick={handleSave}
-                        className="rounded-xl border border-slate-300/70 bg-white/90 px-4 py-2.5 font-semibold text-slate-800 transition hover:bg-white"
+                        className="rounded-xl border border-slate-300/70 bg-white/90 px-4 py-2.5 font-semibold text-slate-800 transition hover:bg-white dark:border-slate-600/70 dark:bg-slate-800/90 dark:text-slate-100 dark:hover:bg-slate-800"
                       >
                         Lưu
                       </button>
                       <button
                         onClick={handleCancel}
-                        className="rounded-xl border border-slate-300/60 bg-white/78 px-4 py-2.5 font-semibold text-slate-700 transition hover:bg-white"
+                        className="rounded-xl border border-slate-300/60 bg-white/78 px-4 py-2.5 font-semibold text-slate-700 transition hover:bg-white dark:border-slate-600/60 dark:bg-slate-800/78 dark:text-slate-200 dark:hover:bg-slate-800"
                       >
                         Hủy
                       </button>
@@ -217,7 +215,7 @@ export default function ProfilePage() {
                   ) : (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="col-span-2 rounded-xl border border-slate-300/70 bg-white/90 px-4 py-2.5 font-semibold text-slate-800 transition hover:bg-white"
+                      className="col-span-2 rounded-xl border border-slate-300/70 bg-white/90 px-4 py-2.5 font-semibold text-slate-800 transition hover:bg-white dark:border-slate-600/70 dark:bg-slate-800/90 dark:text-slate-100 dark:hover:bg-slate-800"
                     >
                       Chỉnh sửa hồ sơ
                     </button>
@@ -231,39 +229,39 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.08 }}
             >
-              <h3 className="mb-3 text-lg font-semibold sm:text-xl">
+              <h3 className="mb-3 text-lg font-semibold text-slate-800 dark:text-slate-100 sm:text-xl">
                 Thống kê tổng quan
               </h3>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <GlassCard className="p-3 sm:p-4" glow="none">
-                  <div className="mb-2 flex items-center gap-2 text-xs text-slate-600 sm:text-sm">
-                    <Calendar size={16} /> Tổng
+                  <div className="mb-2 flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 sm:text-sm">
+                    <Calendar size={16} className="dark:text-slate-400" /> Tổng
                   </div>
-                  <p className="text-2xl font-bold sm:text-3xl">
+                  <p className="text-2xl font-bold dark:text-slate-100 sm:text-3xl">
                     {stats.total}
                   </p>
                 </GlassCard>
                 <GlassCard className="p-3 sm:p-4" glow="none">
-                  <div className="mb-2 flex items-center gap-2 text-xs text-slate-600 sm:text-sm">
-                    <CheckCircle size={16} /> Xong
+                  <div className="mb-2 flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 sm:text-sm">
+                    <CheckCircle size={16} className="dark:text-slate-400" /> Xong
                   </div>
-                  <p className="text-2xl font-bold text-slate-800 sm:text-3xl">
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100 sm:text-3xl">
                     {stats.completed}
                   </p>
                 </GlassCard>
                 <GlassCard className="p-3 sm:p-4" glow="none">
-                  <div className="mb-2 flex items-center gap-2 text-xs text-slate-600 sm:text-sm">
-                    <Clock size={16} /> Chờ
+                  <div className="mb-2 flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 sm:text-sm">
+                    <Clock size={16} className="dark:text-slate-400" /> Chờ
                   </div>
-                  <p className="text-2xl font-bold text-slate-800 sm:text-3xl">
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100 sm:text-3xl">
                     {stats.pending}
                   </p>
                 </GlassCard>
                 <GlassCard className="p-3 sm:p-4" glow="none">
-                  <div className="mb-2 flex items-center gap-2 text-xs text-slate-600 sm:text-sm">
-                    <Clock size={16} /> Delay
+                  <div className="mb-2 flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 sm:text-sm">
+                    <Clock size={16} className="dark:text-slate-400" /> Delay
                   </div>
-                  <p className="text-2xl font-bold text-slate-800 sm:text-3xl">
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100 sm:text-3xl">
                     {stats.delayed}
                   </p>
                 </GlassCard>
@@ -277,27 +275,27 @@ export default function ProfilePage() {
             >
               <GlassCard variant="strong" className="p-4 sm:p-6" glow="none">
                 <div className="mb-3 flex items-center justify-between gap-2">
-                  <h3 className="text-lg font-semibold sm:text-xl">
+                  <h3 className="text-lg font-semibold dark:text-slate-100 sm:text-xl">
                     Tỷ lệ hoàn thành
                   </h3>
-                  <span className="flex items-center gap-1 text-2xl font-bold text-slate-800 sm:text-3xl">
+                  <span className="flex items-center gap-1 text-2xl font-bold text-slate-800 dark:text-slate-100 sm:text-3xl">
                     <TrendUp
                       size={20}
-                      className="text-slate-700"
+                      className="text-slate-700 dark:text-slate-300"
                       weight="bold"
                     />
                     {stats.completionRate}%
                   </span>
                 </div>
-                <div className="h-3 overflow-hidden rounded-full border border-slate-300/55 bg-white/65">
+                <div className="h-3 overflow-hidden rounded-full border border-slate-300/55 bg-white/65 dark:border-slate-600/55 dark:bg-slate-800/65">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${stats.completionRate}%` }}
                     transition={{ duration: 1.1, ease: "easeOut" }}
-                    className="h-full rounded-full bg-linear-to-r from-zinc-100 via-zinc-300 to-zinc-500"
+                    className="h-full rounded-full bg-linear-to-r from-zinc-100 via-zinc-300 to-zinc-500 dark:from-zinc-700 dark:via-zinc-500 dark:to-zinc-300"
                   />
                 </div>
-                <div className="mt-2 flex justify-between text-xs text-slate-500 sm:text-sm">
+                <div className="mt-2 flex justify-between text-xs text-slate-500 dark:text-slate-400 sm:text-sm">
                   <span>{stats.completed} hoàn thành</span>
                   <span>{stats.total} tổng cộng</span>
                 </div>
@@ -312,7 +310,7 @@ export default function ProfilePage() {
               transition={{ delay: 0.2 }}
             >
               <GlassCard variant="strong" className="p-4" glow="none">
-                <h3 className="mb-3 text-lg font-semibold">Danh mục</h3>
+                <h3 className="mb-3 text-lg font-semibold dark:text-slate-100">Danh mục</h3>
                 <div className="space-y-3">
                   {[
                     { key: "work", label: "Công việc", color: "bg-sky-500" },
@@ -336,10 +334,10 @@ export default function ProfilePage() {
                     return (
                       <div key={key}>
                         <div className="mb-1.5 flex items-center justify-between text-sm">
-                          <span className="text-slate-700">{label}</span>
-                          <span className="font-semibold">{count}</span>
+                          <span className="text-slate-700 dark:text-slate-300">{label}</span>
+                          <span className="font-semibold dark:text-slate-100">{count}</span>
                         </div>
-                        <div className="h-2 overflow-hidden rounded-full border border-slate-300/55 bg-white/65">
+                        <div className="h-2 overflow-hidden rounded-full border border-slate-300/55 bg-white/65 dark:border-slate-600/55 dark:bg-slate-800/65">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${percent}%` }}
@@ -360,24 +358,24 @@ export default function ProfilePage() {
               transition={{ delay: 0.26 }}
             >
               <GlassCard variant="strong" className="p-4" glow="none">
-                <h3 className="mb-3 text-lg font-semibold">Thành tích</h3>
-                <div className="space-y-3 text-sm text-slate-700">
+                <h3 className="mb-3 text-lg font-semibold dark:text-slate-100">Thành tích</h3>
+                <div className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
                   <div className="liquid-panel flex items-center gap-3 rounded-xl p-3">
-                    <div className="flex size-10 items-center justify-center rounded-xl bg-slate-200/70 text-slate-700">
+                    <div className="flex size-10 items-center justify-center rounded-xl bg-slate-200/70 text-slate-700 dark:bg-slate-700/70 dark:text-slate-300">
                       <Fire size={20} weight="fill" />
                     </div>
                     <div>
-                      <p className="font-semibold">Streak hiện tại</p>
-                      <p className="text-slate-500">0 ngày liên tiếp</p>
+                      <p className="font-semibold dark:text-slate-100">Streak hiện tại</p>
+                      <p className="text-slate-500 dark:text-slate-400">0 ngày liên tiếp</p>
                     </div>
                   </div>
                   <div className="liquid-panel flex items-center gap-3 rounded-xl p-3">
-                    <div className="flex size-10 items-center justify-center rounded-xl bg-slate-200/70 text-slate-700">
+                    <div className="flex size-10 items-center justify-center rounded-xl bg-slate-200/70 text-slate-700 dark:bg-slate-700/70 dark:text-slate-300">
                       <TrendUp size={20} weight="fill" />
                     </div>
                     <div>
-                      <p className="font-semibold">Năng suất</p>
-                      <p className="text-slate-500">
+                      <p className="font-semibold dark:text-slate-100">Năng suất</p>
+                      <p className="text-slate-500 dark:text-slate-400">
                         {stats.completionRate}% hoàn thành
                       </p>
                     </div>
@@ -397,19 +395,17 @@ export default function ProfilePage() {
         >
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ListChecks size={24} weight="bold" className="text-slate-700" />
-              <h2 className="text-xl font-semibold sm:text-2xl">
+              <ListChecks size={24} weight="bold" className="text-slate-700 dark:text-slate-300" />
+              <h2 className="text-xl font-semibold dark:text-slate-100 sm:text-2xl">
                 Tasks đã hoàn thành
               </h2>
             </div>
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+            <button
               onClick={() => setShowCompletedTasks(!showCompletedTasks)}
-              className="liquid-panel rounded-xl px-3 py-2 text-sm font-semibold text-slate-800"
+              className="liquid-panel rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 transition-transform duration-200 active:scale-95 dark:text-slate-100"
             >
               {showCompletedTasks ? "Ẩn" : `Xem (${completedTasks.length})`}
-            </motion.button>
+            </button>
           </div>
 
           <AnimatePresence>
@@ -432,7 +428,7 @@ export default function ProfilePage() {
                       >
                         <div className="mb-2">
                           {index === 0 || task.date !== completedTasks[index - 1].date ? (
-                            <div className="mb-2 text-sm font-semibold text-slate-600">
+                            <div className="mb-2 text-sm font-semibold text-slate-600 dark:text-slate-400">
                               {format(new Date(task.date), "dd MMMM yyyy", { locale: vi })}
                             </div>
                           ) : null}
@@ -450,13 +446,13 @@ export default function ProfilePage() {
                   <GlassCard className="p-8 text-center">
                     <CheckCircle
                       size={42}
-                      className="mx-auto text-slate-400"
+                      className="mx-auto text-slate-400 dark:text-slate-500"
                       weight="duotone"
                     />
-                    <p className="mt-3 text-base text-slate-700">
+                    <p className="mt-3 text-base text-slate-700 dark:text-slate-300">
                       Chưa có task nào hoàn thành
                     </p>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                       Hoàn thành task để xem chúng ở đây
                     </p>
                   </GlassCard>
