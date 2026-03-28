@@ -13,13 +13,15 @@ import { addTask, completeTask, deleteTask } from "@/store/slices/taskSlice"
 import { notifications } from "@/lib/notifications"
 import { cn } from "@/lib/utils"
 import { Task } from "@/types"
-import { Check, Clock, Lightning, Plus } from "@phosphor-icons/react/dist/ssr"
+import { Check, Clock, Lightning, Plus, Wallet } from "@phosphor-icons/react/dist/ssr"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 import { AnimatePresence, motion } from "framer-motion"
 import { useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function HomePage() {
+  const router = useRouter()
   const dispatch = useAppDispatch()
   const tasks = useAppSelector((state) => state.tasks.tasks)
   const loading = useAppSelector((state) => state.tasks.loading)
@@ -135,22 +137,41 @@ export default function HomePage() {
               transition={{ duration: 0.3 }}
               className="w-full"
             >
-              <div className="mb-1.5 flex items-center gap-2 sm:mb-2 sm:gap-2.5">
-                <div className="liquid-panel flex size-8 items-center justify-center rounded-xl sm:size-10 sm:rounded-2xl">
-                  <Lightning
-                    size={18}
-                    className="text-slate-700 sm:hidden"
-                    weight="fill"
-                  />
-                  <Lightning
-                    size={24}
-                    className="hidden text-slate-700 sm:block"
-                    weight="fill"
-                  />
+              <div className="mb-1.5 flex items-center justify-between gap-2 sm:mb-2">
+                <div className="flex items-center gap-2 sm:gap-2.5">
+                  <div className="liquid-panel flex size-8 items-center justify-center rounded-xl sm:size-10 sm:rounded-2xl">
+                    <Lightning
+                      size={18}
+                      className="text-slate-700 sm:hidden"
+                      weight="fill"
+                    />
+                    <Lightning
+                      size={24}
+                      className="hidden text-slate-700 sm:block"
+                      weight="fill"
+                    />
+                  </div>
+                  <h1 className="liquid-title text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
+                    Dashboard
+                  </h1>
                 </div>
-                <h1 className="liquid-title text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
-                  Dashboard
-                </h1>
+                
+                <button
+                  onClick={() => router.push('/money-management')}
+                  className="liquid-panel flex size-8 items-center justify-center rounded-xl transition-transform duration-200 active:scale-95 sm:size-10 sm:rounded-2xl"
+                  title="Quản lý tiền nhóm"
+                >
+                  <Wallet
+                    size={18}
+                    className="text-slate-700 dark:text-slate-300 sm:hidden"
+                    weight="fill"
+                  />
+                  <Wallet
+                    size={24}
+                    className="hidden text-slate-700 dark:text-slate-300 sm:block"
+                    weight="fill"
+                  />
+                </button>
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-400 sm:text-sm md:text-base">
                 {format(new Date(), "EEEE, dd MMMM yyyy", { locale: vi })}

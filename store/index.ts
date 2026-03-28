@@ -1,10 +1,11 @@
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit"
-import { persistedTaskReducer, persistedThemeReducer } from "./persistConfig"
+import { persistedTaskReducer, persistedThemeReducer, persistedMoneyReducer } from "./persistConfig"
 
 export const store: EnhancedStore = configureStore({
   reducer: {
     tasks: persistedTaskReducer,
     theme: persistedThemeReducer,
+    money: persistedMoneyReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

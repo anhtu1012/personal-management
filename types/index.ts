@@ -32,3 +32,37 @@ export interface UserProfile {
   avatar?: string;
   timezone: string;
 }
+
+// Money Management Types
+export interface Member {
+  id: string;
+  name: string;
+  avatar?: string;
+  color: string; // Màu đại diện cho member
+  createdAt: string;
+}
+
+export interface Expense {
+  id: string;
+  description: string;
+  amount: number;
+  paidBy: string; // Member ID người trả tiền
+  splitBetween: string[]; // Array of Member IDs chia tiền
+  date: string;
+  category?: 'food' | 'transport' | 'entertainment' | 'shopping' | 'other';
+  settled: boolean; // Đã thanh toán chưa
+  createdAt: string;
+}
+
+export interface Balance {
+  memberId: string;
+  totalPaid: number; // Tổng tiền đã trả
+  totalOwed: number; // Tổng tiền nợ
+  balance: number; // Số dư (paid - owed)
+}
+
+export interface Settlement {
+  from: string; // Member ID
+  to: string; // Member ID
+  amount: number;
+}

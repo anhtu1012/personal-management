@@ -2,6 +2,7 @@ import { persistReducer } from "redux-persist"
 import storage from "redux-persist/lib/storage"
 import taskReducer from "./slices/taskSlice"
 import themeReducer from "./slices/themeSlice"
+import moneyReducer from "./slices/moneySlice"
 
 // Persist config for tasks
 const tasksPersistConfig = {
@@ -16,5 +17,13 @@ const themePersistConfig = {
   storage,
 }
 
+// Persist config for money
+const moneyPersistConfig = {
+  key: "money",
+  storage,
+  whitelist: ["members", "expenses"], // Persist members and expenses
+}
+
 export const persistedTaskReducer = persistReducer(tasksPersistConfig, taskReducer)
 export const persistedThemeReducer = persistReducer(themePersistConfig, themeReducer)
+export const persistedMoneyReducer = persistReducer(moneyPersistConfig, moneyReducer)
