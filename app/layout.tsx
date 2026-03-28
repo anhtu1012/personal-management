@@ -4,6 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 import { RegisterSW } from "./register-sw"
+import { NotificationManager } from "./notification-manager"
 
 const notoSansHeading = Noto_Sans({
   subsets: ["latin"],
@@ -69,6 +70,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider defaultTheme="light" forcedTheme="light">
           <RegisterSW />
+          <NotificationManager />
           {children}
         </ThemeProvider>
       </body>

@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 import {
   Calendar,
   CheckCircle,
@@ -9,6 +10,7 @@ import {
   TrendUp,
   User,
   ListChecks,
+  ChartBar,
 } from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "framer-motion"
 import { format } from "date-fns"
@@ -23,6 +25,7 @@ import { storage } from "@/lib/storage"
 import { UserProfile } from "@/types"
 
 export default function ProfilePage() {
+  const router = useRouter()
   const { tasks, completeTask, deleteTask } = useTasks()
   const [showCompletedTasks, setShowCompletedTasks] = useState(false)
   const [profile, setProfile] = useState<UserProfile>(() => {
@@ -88,14 +91,25 @@ export default function ProfilePage() {
         <motion.header
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-3"
+          className="flex items-center justify-between gap-3"
         >
-          <div className="liquid-panel flex size-10 items-center justify-center rounded-2xl">
-            <User size={22} weight="fill" className="text-slate-700" />
+          <div className="flex items-center gap-3">
+            <div className="liquid-panel flex size-10 items-center justify-center rounded-2xl">
+              <User size={22} weight="fill" className="text-slate-700" />
+            </div>
+            <h1 className="liquid-title text-3xl font-bold tracking-tight sm:text-4xl">
+              Hồ Sơ
+            </h1>
           </div>
-          <h1 className="liquid-title text-3xl font-bold tracking-tight sm:text-4xl">
-            Hồ Sơ
-          </h1>
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => router.push("/statistics")}
+            className="liquid-panel flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800"
+          >
+            <ChartBar size={18} weight="bold" />
+            <span className="hidden sm:inline">Thống kê</span>
+          </motion.button>
         </motion.header>
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">

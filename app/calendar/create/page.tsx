@@ -8,6 +8,9 @@ import {
   CalendarBlank,
   Clock,
   TextAa,
+  Tag,
+  ArrowsClockwise,
+  FlagBanner,
 } from "@phosphor-icons/react"
 import { motion } from "framer-motion"
 import { GlassCard } from "@/components/ui/glass-card"
@@ -15,9 +18,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Navigation } from "@/components/ui/navigation"
 import { Textarea } from "@/components/ui/textarea"
+import { TagInput } from "@/components/ui/tag-input"
 import { useTasks } from "@/hooks/use-tasks"
-import { Task } from "@/types"
+import { Task, Priority, RecurringType } from "@/types"
 import { cn } from "@/lib/utils"
+import { notifications } from "@/lib/notifications"
 
 function CreateTaskForm() {
   const router = useRouter()
@@ -32,20 +37,37 @@ function CreateTaskForm() {
   const [date, setDate] = useState(initialDate)
   const [time, setTime] = useState("")
   const [category, setCategory] = useState<Task["category"]>("personal")
+  const [priority, setPriority] = useState<Priority>("medium")
+  const [tags, setTags] = useState<string[]>([])
+  const [recurring, setRecurring] = useState<RecurringType>("none")
+  const [recurringEndDate, setRecurringEndDate] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!title.trim()) return
 
-    addTask({
+    const newTask = addTask({
       title,
       description,
       date,
       time,
       category,
+      priority,
+      tags,
+      recurring,
+      recurringEndDate: recurring !== "none" ? recurringEndDate : undefined,
       completed: false,
       delayed: false,
     })
+
+    // Schedule notification if time is set
+    if (time && newTask) {
+      const taskDateTime = `${date}T${time}`
+      const hasPermission = await notifications.requestPermission()
+      if (hasPermission) {
+        notifications.scheduleTaskReminder(title, taskDateTime)
+      }
+    }
 
     router.push("/calendar")
   }
@@ -163,8 +185,88 @@ function CreateTaskForm() {
             </div>
 
             <div>
+              <Label className="mb-1.5 flex items-center gap-2 text-xs font-semibold sm:mb-2 sm:text-sm md:text-base">
+                <span className="liquid-panel rounded-lg p-1 sm:p-1.5">
+                  <FlagBanner size={14} className="text-slate-700 sm:hidden" />
+                  <FlagBanner size={16} className="hidden text-slate-700 sm:block" />
+                </span>
+                Ưu tiên
+              </Label>
+              <div className="grid grid-cols-3 gap-2">
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setPriority("high")}
+                  className={cn(
+                    "flex flex-col items-center gap-2 rounded-xl border p-3 transition-all",
+                    priority === "high"
+                      ? "border-red-400 bg-red-50 shadow-md ring-2 ring-red-300/50"
+                      : "border-slate-300/50 bg-white/70 hover:border-red-300 hover:bg-red-50/50"
+                  )}
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500">
+                    <span className="text-xs font-bold text-white">!</span>
+                  </div>
+                  <span className={cn(
+                    "text-xs font-semibold",
+                    priority === "high" ? "text-red-700" : "text-slate-700"
+                  )}>
+                    Cao
+                  </span>
+                </motion.button>
+
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setPriority("medium")}
+                  className={cn(
+                    "flex flex-col items-center gap-2 rounded-xl border p-3 transition-all",
+                    priority === "medium"
+                      ? "border-amber-400 bg-amber-50 shadow-md ring-2 ring-amber-300/50"
+                      : "border-slate-300/50 bg-white/70 hover:border-amber-300 hover:bg-amber-50/50"
+                  )}
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500">
+                    <span className="text-xs font-bold text-white">-</span>
+                  </div>
+                  <span className={cn(
+                    "text-xs font-semibold",
+                    priority === "medium" ? "text-amber-700" : "text-slate-700"
+                  )}>
+                    Trung bình
+                  </span>
+                </motion.button>
+
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setPriority("low")}
+                  className={cn(
+                    "flex flex-col items-center gap-2 rounded-xl border p-3 transition-all",
+                    priority === "low"
+                      ? "border-blue-400 bg-blue-50 shadow-md ring-2 ring-blue-300/50"
+                      : "border-slate-300/50 bg-white/70 hover:border-blue-300 hover:bg-blue-50/50"
+                  )}
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
+                    <span className="text-xs font-bold text-white">↓</span>
+                  </div>
+                  <span className={cn(
+                    "text-xs font-semibold",
+                    priority === "low" ? "text-blue-700" : "text-slate-700"
+                  )}>
+                    Thấp
+                  </span>
+                </motion.button>
+              </div>
+            </div>
+
+            <div>
               <Label className="mb-2 block text-xs font-semibold sm:text-sm md:text-base">
-                Danh mục & Màu sắc
+                Danh mục
               </Label>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 <motion.button
@@ -259,6 +361,66 @@ function CreateTaskForm() {
                   </span>
                 </motion.button>
               </div>
+            </div>
+
+            <div>
+              <Label
+                htmlFor="tags"
+                className="mb-1.5 flex items-center gap-2 text-xs font-semibold sm:mb-2 sm:text-sm md:text-base"
+              >
+                <span className="liquid-panel rounded-lg p-1 sm:p-1.5">
+                  <Tag size={14} className="text-slate-700 sm:hidden" />
+                  <Tag size={16} className="hidden text-slate-700 sm:block" />
+                </span>
+                Tags
+              </Label>
+              <TagInput tags={tags} onChange={setTags} placeholder="Thêm tag (Enter hoặc dấu phẩy)" />
+            </div>
+
+            <div>
+              <Label className="mb-1.5 flex items-center gap-2 text-xs font-semibold sm:mb-2 sm:text-sm md:text-base">
+                <span className="liquid-panel rounded-lg p-1 sm:p-1.5">
+                  <ArrowsClockwise size={14} className="text-slate-700 sm:hidden" />
+                  <ArrowsClockwise size={16} className="hidden text-slate-700 sm:block" />
+                </span>
+                Lặp lại
+              </Label>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { value: "none", label: "Không" },
+                  { value: "daily", label: "Hàng ngày" },
+                  { value: "weekly", label: "Hàng tuần" },
+                  { value: "monthly", label: "Hàng tháng" },
+                ].map((rec) => (
+                  <button
+                    key={rec.value}
+                    type="button"
+                    onClick={() => setRecurring(rec.value as RecurringType)}
+                    className={cn(
+                      "rounded-lg border px-2 py-2 text-xs font-medium transition-all",
+                      recurring === rec.value
+                        ? "border-slate-400 bg-white shadow-md ring-2 ring-slate-300/50"
+                        : "border-slate-300/50 bg-white/70 hover:bg-white"
+                    )}
+                  >
+                    {rec.label}
+                  </button>
+                ))}
+              </div>
+              {recurring !== "none" && (
+                <div className="mt-2">
+                  <Label htmlFor="recurringEndDate" className="mb-1 block text-xs text-slate-600">
+                    Kết thúc lặp (tùy chọn)
+                  </Label>
+                  <Input
+                    id="recurringEndDate"
+                    type="date"
+                    value={recurringEndDate}
+                    onChange={(e) => setRecurringEndDate(e.target.value)}
+                    className="h-9 rounded-xl border-slate-300/60 bg-white/75 text-sm"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-2.5 pt-1 sm:gap-3">

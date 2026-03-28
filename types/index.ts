@@ -1,3 +1,6 @@
+export type Priority = 'high' | 'medium' | 'low';
+export type RecurringType = 'none' | 'daily' | 'weekly' | 'monthly';
+
 export interface Task {
   id: string;
   title: string;
@@ -7,6 +10,14 @@ export interface Task {
   completed: boolean;
   delayed: boolean;
   category?: 'work' | 'personal' | 'health' | 'other';
+  priority?: Priority;
+  tags?: string[];
+  notes?: string;
+  recurring?: RecurringType;
+  recurringEndDate?: string;
+  parentTaskId?: string;
+  createdAt?: string;
+  completedAt?: string;
 }
 
 export interface Schedule {

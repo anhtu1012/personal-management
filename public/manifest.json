@@ -1,7 +1,7 @@
 {
   "name": "Quản Lý Lịch Trình",
   "short_name": "Lịch Trình",
-  "description": "Ứng dụng quản lý lịch trình cá nhân",
+  "description": "Ứng dụng quản lý lịch trình cá nhân với thông báo nhắc nhở",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f6f8fc",
@@ -25,5 +25,9 @@
   "lang": "vi",
   "dir": "ltr",
   "scope": "/",
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "permissions": [
+    "notifications"
+  ],
+  "gcm_sender_id": "103953800507"
 }

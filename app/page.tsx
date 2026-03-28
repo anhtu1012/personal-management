@@ -1,23 +1,26 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { format } from "date-fns"
-import { vi } from "date-fns/locale"
-import { AnimatePresence, motion } from "framer-motion"
-import { Check, Clock, Lightning, Plus } from "@phosphor-icons/react"
-import { useTasks } from "@/hooks/use-tasks"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Navigation } from "@/components/ui/navigation"
+import { SearchBar } from "@/components/ui/search-bar"
 import { SwipeableTask } from "@/components/ui/swipeable-task"
 import { Textarea } from "@/components/ui/textarea"
-import { Task } from "@/types"
+import { useTasks } from "@/hooks/use-tasks"
+import { notifications } from "@/lib/notifications"
 import { cn } from "@/lib/utils"
+import { Task } from "@/types"
+import { Check, Clock, Lightning, Plus } from "@phosphor-icons/react"
+import { format } from "date-fns"
+import { vi } from "date-fns/locale"
+import { AnimatePresence, motion } from "framer-motion"
+import { useMemo, useState } from "react"
 
 export default function HomePage() {
   const { tasks, loading, addTask, completeTask, deleteTask } = useTasks()
   const [showQuickAdd, setShowQuickAdd] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -26,17 +29,42 @@ export default function HomePage() {
 
   const selectedDateStr = format(new Date(), "yyyy-MM-dd")
 
+  const filteredTasks = useMemo(() => {
+    let result = tasks
+
+    if (searchQuery) {
+      result = result.filter(
+        (task) =>
+          task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task.tags?.some((tag) =>
+            tag.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+      )
+    }
+
+    return result
+  }, [tasks, searchQuery])
+
   const todayTasks = useMemo(() => {
-    return tasks
+    return filteredTasks
       .filter((task) => task.date === selectedDateStr && !task.completed)
-      .sort((a, b) => (a.time || "").localeCompare(b.time || ""))
-  }, [tasks, selectedDateStr])
+      .sort((a, b) => {
+        if (a.priority && b.priority) {
+          const priorityOrder = { high: 0, medium: 1, low: 2 }
+          if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+            return priorityOrder[a.priority] - priorityOrder[b.priority]
+          }
+        }
+        return (a.time || "").localeCompare(b.time || "")
+      })
+  }, [filteredTasks, selectedDateStr])
 
   const completedToday = useMemo(() => {
-    return tasks.filter(
+    return filteredTasks.filter(
       (task) => task.date === selectedDateStr && task.completed
     ).length
-  }, [tasks, selectedDateStr])
+  }, [filteredTasks, selectedDateStr])
 
   const progressValue =
     todayTasks.length + completedToday > 0
@@ -45,11 +73,11 @@ export default function HomePage() {
         )
       : 0
 
-  const handleQuickAdd = (e: React.FormEvent) => {
+  const handleQuickAdd = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!title.trim()) return
 
-    addTask({
+    const newTask = addTask({
       title,
       description,
       date: selectedDateStr,
@@ -58,6 +86,15 @@ export default function HomePage() {
       completed: false,
       delayed: false,
     })
+
+    // Schedule notification if time is set
+    if (time && newTask) {
+      const taskDateTime = `${selectedDateStr}T${time}`
+      const hasPermission = await notifications.requestPermission()
+      if (hasPermission) {
+        notifications.scheduleTaskReminder(title, taskDateTime)
+      }
+    }
 
     setTitle("")
     setDescription("")
@@ -157,20 +194,28 @@ export default function HomePage() {
             </div>
 
             <section className="w-full">
-              <div className="mb-2 flex items-center justify-between gap-2 sm:mb-3 sm:gap-3">
-                <h2 className="truncate text-lg font-semibold sm:text-xl md:text-2xl">
-                  {format(new Date(), "dd MMMM", { locale: vi })}
-                </h2>
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setShowQuickAdd((prev) => !prev)}
-                  className="liquid-panel flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-800 sm:gap-2 sm:rounded-2xl sm:px-3 sm:py-2 sm:text-sm"
-                >
-                  <Plus size={16} weight="bold" className="sm:hidden" />
-                  <Plus size={18} weight="bold" className="hidden sm:block" />
-                  <span>{showQuickAdd ? "Đóng" : "Thêm"}</span>
-                </motion.button>
+              <div className="mb-3 space-y-2">
+                <SearchBar
+                  onSearch={setSearchQuery}
+                  placeholder="Tìm kiếm tasks..."
+                />
+                <div className="flex items-center justify-between gap-2">
+                  <h2 className="truncate text-lg font-semibold sm:text-xl md:text-2xl">
+                    {format(new Date(), "dd MMMM", { locale: vi })}
+                  </h2>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <motion.button
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => setShowQuickAdd((prev) => !prev)}
+                      className="liquid-panel flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-800 sm:gap-2 sm:rounded-2xl sm:px-3 sm:text-sm"
+                    >
+                      <Plus size={16} weight="bold" className="sm:hidden" />
+                      <Plus size={18} weight="bold" className="hidden sm:block" />
+                      <span>{showQuickAdd ? "Đóng" : "Thêm"}</span>
+                    </motion.button>
+                  </div>
+                </div>
               </div>
 
               <AnimatePresence mode="wait">

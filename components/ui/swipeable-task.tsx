@@ -2,7 +2,8 @@
 
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion"
 import { Task } from "@/types"
-import { Clock, Circle, CheckCircle } from "@phosphor-icons/react"
+import { Clock, Circle, CheckCircle, Tag } from "@phosphor-icons/react"
+import { PriorityBadge } from "./priority-badge"
 import { cn } from "@/lib/utils"
 
 interface SwipeableTaskProps {
@@ -182,7 +183,7 @@ export function SwipeableTask({
           <div className="min-w-0 flex-1 overflow-hidden">
             <h3
               className={cn(
-                "break-words text-sm font-semibold sm:text-base md:text-lg",
+                "wrap-break-word text-sm font-semibold sm:text-base md:text-lg",
                 task.completed && "line-through opacity-50"
               )}
             >
@@ -190,12 +191,18 @@ export function SwipeableTask({
             </h3>
 
             {task.description && (
-              <p className="mt-0.5 line-clamp-2 break-words text-xs text-slate-600 sm:mt-1 sm:text-sm">
+              <p className="mt-0.5 line-clamp-2 wrap-break-word text-xs text-slate-600 sm:mt-1 sm:text-sm">
                 {task.description}
               </p>
             )}
 
             <div className="mt-2 flex flex-wrap items-center gap-1.5 sm:mt-3 sm:gap-2">
+              {task.priority && (
+                <div className="shrink-0">
+                  <PriorityBadge priority={task.priority} size="sm" />
+                </div>
+              )}
+
               {task.time && (
                 <div className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-300/55 bg-white/72 px-2 py-1 sm:gap-1.5 sm:rounded-xl sm:px-3 sm:py-1.5">
                   <Clock size={12} weight="bold" className="shrink-0 text-slate-700 sm:hidden" />
@@ -224,10 +231,31 @@ export function SwipeableTask({
                 </div>
               )}
 
+              {task.tags && task.tags.length > 0 && (
+                <div className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-300/55 bg-white/72 px-2 py-1 sm:gap-1.5 sm:rounded-xl sm:px-3 sm:py-1.5">
+                  <Tag size={12} weight="bold" className="shrink-0 text-slate-700 sm:hidden" />
+                  <Tag size={14} weight="bold" className="hidden shrink-0 text-slate-700 sm:block" />
+                  <span className="whitespace-nowrap text-[11px] font-medium text-slate-700 sm:text-xs">
+                    {task.tags[0]}
+                    {task.tags.length > 1 && ` +${task.tags.length - 1}`}
+                  </span>
+                </div>
+              )}
+
               {task.delayed && (
                 <div className="shrink-0 rounded-lg border border-amber-300/60 bg-amber-100/75 px-2 py-1 sm:rounded-xl sm:px-3 sm:py-1.5">
                   <span className="whitespace-nowrap text-[11px] font-medium text-amber-700 sm:text-xs">
                     Delayed
+                  </span>
+                </div>
+              )}
+
+              {task.recurring && task.recurring !== "none" && (
+                <div className="shrink-0 rounded-lg border border-purple-300/60 bg-purple-100/75 px-2 py-1 sm:rounded-xl sm:px-3 sm:py-1.5">
+                  <span className="whitespace-nowrap text-[11px] font-medium text-purple-700 sm:text-xs">
+                    {task.recurring === "daily" && "Hàng ngày"}
+                    {task.recurring === "weekly" && "Hàng tuần"}
+                    {task.recurring === "monthly" && "Hàng tháng"}
                   </span>
                 </div>
               )}
