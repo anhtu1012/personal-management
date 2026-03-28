@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
-import { X, CaretDown, CaretRight, Check, FilePdf } from "@phosphor-icons/react"
+import { X, CaretDown, CaretRight, Check, FilePdf, Printer } from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "framer-motion"
 import { GlassCard } from "./glass-card"
 import { Input } from "./input"
@@ -120,29 +120,74 @@ export function MemberDetailModal({
     setShowSettlement(false)
   }
 
-  const handleExportPDF = async () => {
-    const fileName = `chi-tiet-${member.name.toLowerCase().replace(/\s+/g, '-')}-${format(new Date(), 'dd-MM-yyyy')}`
-    await exportToPDF('member-detail-content', fileName)
+  const handleExportPDF = () => {
+    // Sử dụng window.print() - đơn giản và luôn hoạt động
+    handlePrint()
+  }
+
+  const handlePrint = () => {
+    const printContent = document.getElementById('member-detail-content')
+    if (!printContent) {
+      alert('Không tìm thấy nội dung để in')
+      return
+    }
+
+    const printWindow = window.open('', '_blank', 'width=800,height=600')
+    if (!printWindow) {
+      alert('Vui lòng cho phép popup để in/xuất PDF')
+      return
+    }
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Chi tiết - ${member.name}</title>
+          <style>
+            * { 
+              margin: 0; 
+              padding: 0; 
+              box-sizing: border-box; 
+            }
+            body { 
+              font-family: Arial, sans-serif; 
+              background: white;
+              color: #1e293b;
+            }
+            @media print { 
+              body { 
+                padding: 0; 
+              }
+              .no-print {
+                display: none !important;
+              }
+            }
+            @page { 
+              margin: 1cm;
+              size: A4;
+            }
+          </style>
+        </head>
+        <body>
+          ${printContent.innerHTML}
+          <script>
+            window.onload = function() { 
+              setTimeout(function() {
+                window.print();
+              }, 250);
+            }
+          </script>
+        </body>
+      </html>
+    `)
+    printWindow.document.close()
   }
 
   const quickSettlementAmounts = [10, 20, 50, 100, 200, 500]
 
   return (
     <>
-      {/* Hidden PDF content - rendered in DOM but hidden */}
-      <div style={{ position: 'fixed', left: '-9999px', top: 0, width: '800px' }}>
-        <div id="member-detail-content">
-          <MemberDetailPDF
-            member={member}
-            expenses={memberExpenses}
-            allMembers={allMembers}
-            totalPaid={totalPaid}
-            totalOwed={totalOwed}
-            balance={balance}
-          />
-        </div>
-      </div>
-
       <AnimatePresence>
       {isOpen && (
         <>
@@ -183,12 +228,19 @@ export function MemberDetailModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <button
+                    onClick={handlePrint}
+                    className="rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-slate-200 active:scale-95 dark:hover:bg-slate-700"
+                    title="In (Ctrl+P)"
+                  >
+                    <Printer size={20} weight="bold" className="text-slate-700 dark:text-slate-300" />
+                  </button>
+                  {/* <button
                     onClick={handleExportPDF}
                     className="rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-slate-200 active:scale-95 dark:hover:bg-slate-700"
                     title="Xuất PDF"
                   >
                     <FilePdf size={20} weight="bold" className="text-rose-600 dark:text-rose-400" />
-                  </button>
+                  </button> */}
                   <button
                     onClick={onClose}
                     className="rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-slate-200 active:scale-95 dark:hover:bg-slate-700"
@@ -412,6 +464,29 @@ export function MemberDetailModal({
                 </div>
               )}
             </GlassCard>
+
+            {/* Hidden PDF content - positioned off-screen but in DOM */}
+            <div 
+              style={{ 
+                position: 'fixed', 
+                left: '-10000px', 
+                top: 0,
+                width: '800px',
+                backgroundColor: '#ffffff',
+                zIndex: -1
+              }}
+            >
+              <div id="member-detail-content">
+                <MemberDetailPDF
+                  member={member}
+                  expenses={memberExpenses}
+                  allMembers={allMembers}
+                  totalPaid={totalPaid}
+                  totalOwed={totalOwed}
+                  balance={balance}
+                />
+              </div>
+            </div>
           </motion.div>
         </>
       )}
