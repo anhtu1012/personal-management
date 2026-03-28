@@ -1,7 +1,7 @@
 import { Geist_Mono, Oxanium, Noto_Sans } from "next/font/google"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import { Providers } from "./providers"
 import { cn } from "@/lib/utils"
 import { RegisterSW } from "./register-sw"
 import { NotificationManager } from "./notification-manager"
@@ -68,11 +68,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon.png" />
       </head>
       <body>
-        <ThemeProvider defaultTheme="light" forcedTheme="light">
+        <Providers>
           <RegisterSW />
           <NotificationManager />
           {children}
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   )

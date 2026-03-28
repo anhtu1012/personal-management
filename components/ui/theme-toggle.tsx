@@ -1,77 +1,51 @@
 "use client"
 
-import { Sun, Moon, Monitor } from "@phosphor-icons/react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useState } from "react"
+import { SunDim, MoonStars } from "@phosphor-icons/react/dist/ssr"
+import { motion } from "framer-motion"
 import { useTheme } from "@/hooks/use-theme"
-import { cn } from "@/lib/utils"
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
-  const [isOpen, setIsOpen] = useState(false)
+  const { setTheme, resolvedTheme } = useTheme()
 
-  const themes = [
-    { value: "light" as const, label: "Sáng", icon: Sun },
-    { value: "dark" as const, label: "Tối", icon: Moon },
-    { value: "auto" as const, label: "Auto", icon: Monitor },
-  ]
+  const handleToggle = () => {
+    // Toggle between light and dark
+    if (resolvedTheme === "dark") {
+      setTheme("light")
+    } else {
+      setTheme("dark")
+    }
+  }
 
-  const currentTheme = themes.find((t) => t.value === theme) || themes[0]
-  const Icon = currentTheme.icon
+  const isDark = resolvedTheme === "dark"
 
   return (
-    <div className="relative">
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className="liquid-panel flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 dark:text-slate-200"
-      >
-        <Icon size={18} weight="bold" />
-        <span className="hidden sm:inline">{currentTheme.label}</span>
-      </motion.button>
+    <button
+      onClick={handleToggle}
+      className="relative h-8 w-16 rounded-full border border-slate-300/60 bg-slate-200 transition-colors dark:border-slate-600/60 dark:bg-slate-700"
+      aria-label={isDark ? "Chuyển sang chế độ sáng" : "Chuyển sang chế độ tối"}
+    >
+      {/* Track background */}
+      <motion.div
+        animate={{
+          backgroundColor: isDark ? "#1e293b" : "#e2e8f0",
+        }}
+        className="absolute inset-0 rounded-full"
+      />
 
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              className="fixed inset-0 z-60"
-            />
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="absolute right-0 top-full z-70 mt-2 w-40 overflow-hidden rounded-xl border border-slate-300/60 bg-white/90 shadow-lg backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-800/90"
-            >
-              {themes.map((t) => {
-                const ThemeIcon = t.icon
-                return (
-                  <button
-                    key={t.value}
-                    onClick={() => {
-                      setTheme(t.value)
-                      setIsOpen(false)
-                    }}
-                    className={cn(
-                      "flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors",
-                      theme === t.value
-                        ? "bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-slate-100"
-                        : "text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
-                    )}
-                  >
-                    <ThemeIcon size={18} weight={theme === t.value ? "fill" : "regular"} />
-                    <span>{t.label}</span>
-                  </button>
-                )
-              })}
-            </motion.div>
-          </>
+      {/* Sliding circle */}
+      <motion.div
+        animate={{
+          x: isDark ? 32 : 0,
+        }}
+        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        className="absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white shadow-md dark:bg-slate-100"
+      >
+        {isDark ? (
+          <MoonStars size={14} weight="fill" className="text-slate-700" />
+        ) : (
+          <SunDim size={14} weight="fill" className="text-amber-500" />
         )}
-      </AnimatePresence>
-    </div>
+      </motion.div>
+    </button>
   )
 }

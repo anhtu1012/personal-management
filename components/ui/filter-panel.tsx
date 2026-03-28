@@ -45,14 +45,14 @@ export function FilterPanel({ onFilterChange }: FilterPanelProps) {
         whileTap={{ scale: 0.97 }}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "liquid-panel relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800",
-          activeFilterCount > 0 && "ring-2 ring-slate-400"
+          "liquid-panel relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 dark:text-slate-100",
+          activeFilterCount > 0 && "ring-2 ring-slate-400 dark:ring-slate-500"
         )}
       >
         <Funnel size={18} weight="bold" />
         <span>Lọc</span>
         {activeFilterCount > 0 && (
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-700 text-[10px] font-bold text-white">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-700 text-[10px] font-bold text-white dark:bg-slate-300 dark:text-slate-900">
             {activeFilterCount}
           </span>
         )}
@@ -66,7 +66,7 @@ export function FilterPanel({ onFilterChange }: FilterPanelProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 z-60 bg-slate-900/25 backdrop-blur-[1px]"
+              className="fixed inset-0 z-60 bg-slate-900/25 backdrop-blur-[1px] dark:bg-black/40"
             />
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -76,7 +76,7 @@ export function FilterPanel({ onFilterChange }: FilterPanelProps) {
             >
               <GlassCard variant="strong" className="p-4">
                 <div className="mb-3 flex items-center justify-between">
-                  <h3 className="font-semibold text-slate-800">Bộ lọc</h3>
+                  <h3 className="font-semibold text-slate-800 dark:text-slate-100">Bộ lọc</h3>
                   <button
                     onClick={() => setIsOpen(false)}
                     className="rounded-lg p-1 hover:bg-slate-200"

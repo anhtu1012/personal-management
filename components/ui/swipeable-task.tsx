@@ -5,6 +5,7 @@ import { Task } from "@/types"
 import { Clock, Circle, CheckCircle, Tag } from "@phosphor-icons/react"
 import { PriorityBadge } from "./priority-badge"
 import { cn } from "@/lib/utils"
+import { haptics } from "@/lib/haptics"
 
 interface SwipeableTaskProps {
   task: Task
@@ -40,11 +41,13 @@ export function SwipeableTask({
     info: PanInfo
   ) => {
     // Increase threshold - need to drag further to trigger action
-    if (info.offset.x < -150) {
-      // Swipe left = Delete (need to drag at least 150px)
+    if (info.offset.x < -120) {
+      // Swipe left = Delete (reduced from 150px to 120px for easier mobile use)
+      haptics.error()
       onDelete()
-    } else if (info.offset.x > 150) {
-      // Swipe right = Complete (need to drag at least 150px)
+    } else if (info.offset.x > 120) {
+      // Swipe right = Complete (reduced from 150px to 120px)
+      haptics.success()
       onComplete()
     }
   }
@@ -121,31 +124,32 @@ export function SwipeableTask({
       <motion.div
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.2}
+        dragElastic={0.3}
+        dragMomentum={false}
         style={{ x, opacity, scale }}
         onDragEnd={handleDragEnd}
         onClick={onClick}
-        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         className={cn(
           "relative z-10 cursor-pointer overflow-hidden rounded-2xl border-2 p-3 backdrop-blur-2xl transition-all sm:rounded-3xl sm:p-4 md:p-5",
           task.completed
-            ? "border-slate-300/45 bg-white/65 opacity-70"
+            ? "border-slate-300/45 bg-white/65 opacity-70 dark:border-slate-600/45 dark:bg-slate-800/65"
             : task.category === "work"
-              ? "border-sky-400/60 bg-white/90 hover:border-sky-500/70 hover:bg-white/95 active:scale-[0.995]"
+              ? "border-sky-400/60 bg-white/90 hover:border-sky-500/70 hover:bg-white/95 active:scale-[0.995] dark:border-sky-500/50 dark:bg-slate-800/90 dark:hover:border-sky-400/70 dark:hover:bg-slate-800/95"
               : task.category === "personal"
-                ? "border-indigo-400/60 bg-white/90 hover:border-indigo-500/70 hover:bg-white/95 active:scale-[0.995]"
+                ? "border-indigo-400/60 bg-white/90 hover:border-indigo-500/70 hover:bg-white/95 active:scale-[0.995] dark:border-indigo-500/50 dark:bg-slate-800/90 dark:hover:border-indigo-400/70 dark:hover:bg-slate-800/95"
                 : task.category === "health"
-                  ? "border-emerald-400/60 bg-white/90 hover:border-emerald-500/70 hover:bg-white/95 active:scale-[0.995]"
-                  : "border-slate-400/60 bg-white/90 hover:border-slate-500/70 hover:bg-white/95 active:scale-[0.995]"
+                  ? "border-emerald-400/60 bg-white/90 hover:border-emerald-500/70 hover:bg-white/95 active:scale-[0.995] dark:border-emerald-500/50 dark:bg-slate-800/90 dark:hover:border-emerald-400/70 dark:hover:bg-slate-800/95"
+                  : "border-slate-400/60 bg-white/90 hover:border-slate-500/70 hover:bg-white/95 active:scale-[0.995] dark:border-slate-600/60 dark:bg-slate-800/90 dark:hover:border-slate-500/70 dark:hover:bg-slate-800/95"
         )}
       >
         <div className="flex items-start gap-2.5 sm:gap-3 md:gap-4">
           {/* Checkbox */}
           <motion.button
-            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={(e) => {
               e.stopPropagation()
+              haptics.light()
               onComplete()
             }}
             className="mt-0.5 shrink-0 sm:mt-1"
@@ -164,16 +168,16 @@ export function SwipeableTask({
                 />
               </div>
             ) : (
-              <div className="rounded-lg border border-slate-300/60 bg-white/70 p-0.5 transition-colors hover:border-slate-400/70 sm:rounded-xl sm:p-1">
+              <div className="rounded-lg border border-slate-300/60 bg-white/70 p-0.5 transition-colors hover:border-slate-400/70 dark:border-slate-600/60 dark:bg-slate-700/70 dark:hover:border-slate-500/70 sm:rounded-xl sm:p-1">
                 <Circle
                   size={20}
                   weight="bold"
-                  className="text-slate-500 transition-colors hover:text-slate-700 sm:hidden"
+                  className="text-slate-500 transition-colors hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 sm:hidden"
                 />
                 <Circle
                   size={24}
                   weight="bold"
-                  className="hidden text-slate-500 transition-colors hover:text-slate-700 sm:block"
+                  className="hidden text-slate-500 transition-colors hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 sm:block"
                 />
               </div>
             )}
@@ -183,7 +187,7 @@ export function SwipeableTask({
           <div className="min-w-0 flex-1 overflow-hidden">
             <h3
               className={cn(
-                "wrap-break-word text-sm font-semibold sm:text-base md:text-lg",
+                "wrap-break-word text-sm font-semibold text-slate-800 dark:text-slate-100 sm:text-base md:text-lg",
                 task.completed && "line-through opacity-50"
               )}
             >
@@ -191,7 +195,7 @@ export function SwipeableTask({
             </h3>
 
             {task.description && (
-              <p className="mt-0.5 line-clamp-2 wrap-break-word text-xs text-slate-600 sm:mt-1 sm:text-sm">
+              <p className="mt-0.5 line-clamp-2 wrap-break-word text-xs text-slate-600 dark:text-slate-400 sm:mt-1 sm:text-sm">
                 {task.description}
               </p>
             )}
@@ -204,10 +208,10 @@ export function SwipeableTask({
               )}
 
               {task.time && (
-                <div className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-300/55 bg-white/72 px-2 py-1 sm:gap-1.5 sm:rounded-xl sm:px-3 sm:py-1.5">
-                  <Clock size={12} weight="bold" className="shrink-0 text-slate-700 sm:hidden" />
-                  <Clock size={14} weight="bold" className="hidden shrink-0 text-slate-700 sm:block" />
-                  <span className="whitespace-nowrap text-[11px] font-medium text-slate-700 sm:text-xs">
+                <div className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-300/55 bg-white/72 px-2 py-1 dark:border-slate-600/55 dark:bg-slate-700/72 sm:gap-1.5 sm:rounded-xl sm:px-3 sm:py-1.5">
+                  <Clock size={12} weight="bold" className="shrink-0 text-slate-700 dark:text-slate-300 sm:hidden" />
+                  <Clock size={14} weight="bold" className="hidden shrink-0 text-slate-700 dark:text-slate-300 sm:block" />
+                  <span className="whitespace-nowrap text-[11px] font-medium text-slate-700 dark:text-slate-300 sm:text-xs">
                     {task.time}
                   </span>
                 </div>
@@ -218,13 +222,13 @@ export function SwipeableTask({
                   className={cn(
                     "shrink-0 rounded-lg border px-2 py-1 text-[11px] font-medium sm:rounded-xl sm:px-3 sm:py-1.5 sm:text-xs",
                     categoryInfo.color === "zinc-1" &&
-                      "border-sky-300/45 bg-sky-100/70 text-sky-700",
+                      "border-sky-300/45 bg-sky-100/70 text-sky-700 dark:border-sky-500/50 dark:bg-sky-900/40 dark:text-sky-300",
                     categoryInfo.color === "zinc-2" &&
-                      "border-indigo-300/45 bg-indigo-100/70 text-indigo-700",
+                      "border-indigo-300/45 bg-indigo-100/70 text-indigo-700 dark:border-indigo-500/50 dark:bg-indigo-900/40 dark:text-indigo-300",
                     categoryInfo.color === "zinc-3" &&
-                      "border-emerald-300/45 bg-emerald-100/70 text-emerald-700",
+                      "border-emerald-300/45 bg-emerald-100/70 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-900/40 dark:text-emerald-300",
                     categoryInfo.color === "zinc-4" &&
-                      "border-slate-300/55 bg-slate-100/75 text-slate-600"
+                      "border-slate-300/55 bg-slate-100/75 text-slate-600 dark:border-slate-600/55 dark:bg-slate-700/75 dark:text-slate-300"
                   )}
                 >
                   <span className="whitespace-nowrap">{categoryInfo.label}</span>
@@ -232,10 +236,10 @@ export function SwipeableTask({
               )}
 
               {task.tags && task.tags.length > 0 && (
-                <div className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-300/55 bg-white/72 px-2 py-1 sm:gap-1.5 sm:rounded-xl sm:px-3 sm:py-1.5">
-                  <Tag size={12} weight="bold" className="shrink-0 text-slate-700 sm:hidden" />
-                  <Tag size={14} weight="bold" className="hidden shrink-0 text-slate-700 sm:block" />
-                  <span className="whitespace-nowrap text-[11px] font-medium text-slate-700 sm:text-xs">
+                <div className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-300/55 bg-white/72 px-2 py-1 dark:border-slate-600/55 dark:bg-slate-700/72 sm:gap-1.5 sm:rounded-xl sm:px-3 sm:py-1.5">
+                  <Tag size={12} weight="bold" className="shrink-0 text-slate-700 dark:text-slate-300 sm:hidden" />
+                  <Tag size={14} weight="bold" className="hidden shrink-0 text-slate-700 dark:text-slate-300 sm:block" />
+                  <span className="whitespace-nowrap text-[11px] font-medium text-slate-700 dark:text-slate-300 sm:text-xs">
                     {task.tags[0]}
                     {task.tags.length > 1 && ` +${task.tags.length - 1}`}
                   </span>
@@ -243,16 +247,16 @@ export function SwipeableTask({
               )}
 
               {task.delayed && (
-                <div className="shrink-0 rounded-lg border border-amber-300/60 bg-amber-100/75 px-2 py-1 sm:rounded-xl sm:px-3 sm:py-1.5">
-                  <span className="whitespace-nowrap text-[11px] font-medium text-amber-700 sm:text-xs">
+                <div className="shrink-0 rounded-lg border border-amber-300/60 bg-amber-100/75 px-2 py-1 dark:border-amber-500/50 dark:bg-amber-900/40 dark:text-amber-300 sm:rounded-xl sm:px-3 sm:py-1.5">
+                  <span className="whitespace-nowrap text-[11px] font-medium text-amber-700 dark:text-amber-300 sm:text-xs">
                     Delayed
                   </span>
                 </div>
               )}
 
               {task.recurring && task.recurring !== "none" && (
-                <div className="shrink-0 rounded-lg border border-purple-300/60 bg-purple-100/75 px-2 py-1 sm:rounded-xl sm:px-3 sm:py-1.5">
-                  <span className="whitespace-nowrap text-[11px] font-medium text-purple-700 sm:text-xs">
+                <div className="shrink-0 rounded-lg border border-purple-300/60 bg-purple-100/75 px-2 py-1 dark:border-purple-500/50 dark:bg-purple-900/40 dark:text-purple-300 sm:rounded-xl sm:px-3 sm:py-1.5">
+                  <span className="whitespace-nowrap text-[11px] font-medium text-purple-700 dark:text-purple-300 sm:text-xs">
                     {task.recurring === "daily" && "Hàng ngày"}
                     {task.recurring === "weekly" && "Hàng tuần"}
                     {task.recurring === "monthly" && "Hàng tháng"}

@@ -6,21 +6,23 @@ import { Label } from "@/components/ui/label"
 import { Navigation } from "@/components/ui/navigation"
 import { SearchBar } from "@/components/ui/search-bar"
 import { SwipeableTask } from "@/components/ui/swipeable-task"
+import { TaskDetailModal } from "@/components/ui/task-detail-modal"
 import { Textarea } from "@/components/ui/textarea"
-import { useTasks } from "@/hooks/use-tasks"
+import { useTaskContext } from "@/contexts/TaskContext"
 import { notifications } from "@/lib/notifications"
 import { cn } from "@/lib/utils"
 import { Task } from "@/types"
-import { Check, Clock, Lightning, Plus } from "@phosphor-icons/react"
+import { Check, Clock, Lightning, Plus } from "@phosphor-icons/react/dist/ssr"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 import { AnimatePresence, motion } from "framer-motion"
 import { useMemo, useState } from "react"
 
 export default function HomePage() {
-  const { tasks, loading, addTask, completeTask, deleteTask } = useTasks()
+  const { tasks, loading, addTask, completeTask, deleteTask } = useTaskContext()
   const [showQuickAdd, setShowQuickAdd] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -146,7 +148,7 @@ export default function HomePage() {
                   Dashboard
                 </h1>
               </div>
-              <p className="text-xs text-slate-600 sm:text-sm md:text-base">
+              <p className="text-xs text-slate-600 dark:text-slate-400 sm:text-sm md:text-base">
                 {format(new Date(), "EEEE, dd MMMM yyyy", { locale: vi })}
               </p>
             </motion.header>
@@ -154,40 +156,40 @@ export default function HomePage() {
 
             <div className="grid w-full grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4">
               <GlassCard className="overflow-hidden p-2.5 sm:p-3 md:p-4" glow="none">
-                <div className="mb-1.5 flex items-center gap-1.5 text-[11px] text-slate-600 sm:mb-2 sm:gap-2 sm:text-xs md:text-sm">
-                  <Clock size={14} className="shrink-0 text-slate-700 sm:hidden" />
-                  <Clock size={16} className="hidden shrink-0 text-slate-700 sm:block" />
+                <div className="mb-1.5 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-400 sm:mb-2 sm:gap-2 sm:text-xs md:text-sm">
+                  <Clock size={14} className="shrink-0 text-slate-700 dark:text-slate-300 sm:hidden" />
+                  <Clock size={16} className="hidden shrink-0 text-slate-700 dark:text-slate-300 sm:block" />
                   <span className="truncate">Đang chờ</span>
                 </div>
-                <p className="truncate text-xl font-bold sm:text-2xl md:text-3xl">
+                <p className="truncate text-xl font-bold text-slate-800 dark:text-slate-100 sm:text-2xl md:text-3xl">
                   {todayTasks.length}
                 </p>
               </GlassCard>
 
               <GlassCard className="overflow-hidden p-2.5 sm:p-3 md:p-4" glow="none">
-                <div className="mb-1.5 flex items-center gap-1.5 text-[11px] text-slate-600 sm:mb-2 sm:gap-2 sm:text-xs md:text-sm">
-                  <Check size={14} className="shrink-0 text-slate-700 sm:hidden" weight="bold" />
-                  <Check size={16} className="hidden shrink-0 text-slate-700 sm:block" weight="bold" />
+                <div className="mb-1.5 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-400 sm:mb-2 sm:gap-2 sm:text-xs md:text-sm">
+                  <Check size={14} className="shrink-0 text-slate-700 dark:text-slate-300 sm:hidden" weight="bold" />
+                  <Check size={16} className="hidden shrink-0 text-slate-700 dark:text-slate-300 sm:block" weight="bold" />
                   <span className="truncate">Hoàn thành</span>
                 </div>
-                <p className="truncate text-xl font-bold text-slate-800 sm:text-2xl md:text-3xl">
+                <p className="truncate text-xl font-bold text-slate-800 dark:text-slate-100 sm:text-2xl md:text-3xl">
                   {completedToday}
                 </p>
               </GlassCard>
 
               <GlassCard className="col-span-2 overflow-hidden p-2.5 sm:p-3 md:p-4" glow="none">
-                <div className="mb-1.5 flex items-center justify-between gap-2 text-[11px] text-slate-600 sm:mb-2 sm:text-xs md:text-sm">
+                <div className="mb-1.5 flex items-center justify-between gap-2 text-[11px] text-slate-600 dark:text-slate-400 sm:mb-2 sm:text-xs md:text-sm">
                   <span className="truncate">Tiến độ hôm nay</span>
-                  <span className="shrink-0 text-base font-bold text-slate-800 sm:text-lg md:text-2xl">
+                  <span className="shrink-0 text-base font-bold text-slate-800 dark:text-slate-100 sm:text-lg md:text-2xl">
                     {progressValue}%
                   </span>
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full border border-slate-300/55 bg-white/65 sm:h-2.5 md:h-3">
+                <div className="h-2 w-full overflow-hidden rounded-full border border-slate-300/55 bg-white/65 dark:border-slate-600/55 dark:bg-slate-800/65 sm:h-2.5 md:h-3">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progressValue}%` }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="h-full rounded-full bg-linear-to-r from-zinc-100 via-zinc-300 to-zinc-500"
+                    className="h-full rounded-full bg-linear-to-r from-zinc-100 via-zinc-300 to-zinc-500 dark:from-zinc-700 dark:via-zinc-500 dark:to-zinc-300"
                   />
                 </div>
               </GlassCard>
@@ -200,7 +202,7 @@ export default function HomePage() {
                   placeholder="Tìm kiếm tasks..."
                 />
                 <div className="flex items-center justify-between gap-2">
-                  <h2 className="truncate text-lg font-semibold sm:text-xl md:text-2xl">
+                  <h2 className="truncate text-lg font-semibold text-slate-800 dark:text-slate-100 sm:text-xl md:text-2xl">
                     {format(new Date(), "dd MMMM", { locale: vi })}
                   </h2>
                   <div className="flex shrink-0 items-center gap-2">
@@ -208,10 +210,10 @@ export default function HomePage() {
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
                       onClick={() => setShowQuickAdd((prev) => !prev)}
-                      className="liquid-panel flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-800 sm:gap-2 sm:rounded-2xl sm:px-3 sm:text-sm"
+                      className="liquid-panel flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-800 dark:text-slate-100 sm:gap-2 sm:rounded-2xl sm:px-3 sm:text-sm"
                     >
-                      <Plus size={16} weight="bold" className="sm:hidden" />
-                      <Plus size={18} weight="bold" className="hidden sm:block" />
+                      <Plus size={16} weight="bold" className="sm:hidden dark:text-slate-100" />
+                      <Plus size={18} weight="bold" className="hidden sm:block dark:text-slate-100" />
                       <span>{showQuickAdd ? "Đóng" : "Thêm"}</span>
                     </motion.button>
                   </div>
@@ -242,7 +244,7 @@ export default function HomePage() {
                           <div>
                             <Label
                               htmlFor="title-mobile"
-                              className="mb-1 block text-xs font-medium text-slate-700"
+                              className="mb-1 block text-xs font-medium text-slate-700 dark:text-slate-300"
                             >
                               Tiêu đề
                             </Label>
@@ -259,7 +261,7 @@ export default function HomePage() {
                           <div>
                             <Label
                               htmlFor="time-mobile"
-                              className="mb-1 block text-xs font-medium text-slate-700"
+                              className="mb-1 block text-xs font-medium text-slate-700 dark:text-slate-300"
                             >
                               Thời gian
                             </Label>
@@ -273,7 +275,7 @@ export default function HomePage() {
                           </div>
 
                           <div>
-                            <Label className="mb-1 block text-xs font-medium text-slate-700">
+                            <Label className="mb-1 block text-xs font-medium text-slate-700 dark:text-slate-300">
                               Danh mục
                             </Label>
                             <div className="flex gap-1.5">
@@ -304,7 +306,7 @@ export default function HomePage() {
 
                           <button
                             type="submit"
-                            className="w-full rounded-xl border border-slate-300/70 bg-white/92 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-white"
+                            className="w-full rounded-xl border border-slate-300/70 bg-white/92 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-white dark:border-slate-600/70 dark:bg-slate-800/92 dark:text-slate-100 dark:hover:bg-slate-800"
                           >
                             Tạo task
                           </button>
@@ -328,7 +330,7 @@ export default function HomePage() {
                           <div>
                             <Label
                               htmlFor="title"
-                              className="mb-2 block text-sm text-slate-700"
+                              className="mb-2 block text-sm text-slate-700 dark:text-slate-300"
                             >
                               Tiêu đề
                             </Label>
@@ -345,7 +347,7 @@ export default function HomePage() {
                           <div>
                             <Label
                               htmlFor="description"
-                              className="mb-2 block text-sm text-slate-700"
+                              className="mb-2 block text-sm text-slate-700 dark:text-slate-300"
                             >
                               Mô tả
                             </Label>
@@ -363,7 +365,7 @@ export default function HomePage() {
                             <div>
                               <Label
                                 htmlFor="time"
-                                className="mb-2 block text-sm text-slate-700"
+                                className="mb-2 block text-sm text-slate-700 dark:text-slate-300"
                               >
                                 Thời gian
                               </Label>
@@ -377,7 +379,7 @@ export default function HomePage() {
                             </div>
 
                             <div>
-                              <Label className="mb-2 block text-sm text-slate-700">
+                              <Label className="mb-2 block text-sm text-slate-700 dark:text-slate-300">
                                 Danh mục
                               </Label>
                               <div className="flex gap-2">
@@ -409,7 +411,7 @@ export default function HomePage() {
 
                           <button
                             type="submit"
-                            className="w-full rounded-xl border border-slate-300/70 bg-white/90 px-4 py-2.5 font-semibold text-slate-800 transition hover:bg-white"
+                            className="w-full rounded-xl border border-slate-300/70 bg-white/90 px-4 py-2.5 font-semibold text-slate-800 transition hover:bg-white dark:border-slate-600/70 dark:bg-slate-800/90 dark:text-slate-100 dark:hover:bg-slate-800"
                           >
                             Tạo task
                           </button>
@@ -439,10 +441,10 @@ export default function HomePage() {
                           className="mx-auto hidden text-slate-500 sm:block"
                           weight="duotone"
                         />
-                        <p className="mt-2 text-sm text-slate-700 sm:mt-3 sm:text-base md:text-lg">
+                        <p className="mt-2 text-sm text-slate-700 dark:text-slate-300 sm:mt-3 sm:text-base md:text-lg">
                           Không có task nào
                         </p>
-                        <p className="mt-0.5 text-xs text-slate-500 sm:mt-1 sm:text-sm">
+                        <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 sm:mt-1 sm:text-sm">
                           Nhấn &quot;Thêm&quot; để bắt đầu.
                         </p>
                       </GlassCard>
@@ -461,7 +463,7 @@ export default function HomePage() {
                         task={task}
                         onComplete={() => completeTask(task.id)}
                         onDelete={() => deleteTask(task.id)}
-                        onClick={() => {}}
+                        onClick={() => setSelectedTask(task)}
                       />
                     </motion.div>
                   ))}
@@ -471,6 +473,18 @@ export default function HomePage() {
           </section>
         </div>
       </div>
+
+      {selectedTask && (
+        <TaskDetailModal
+          isOpen={!!selectedTask}
+          onClose={() => setSelectedTask(null)}
+          task={selectedTask}
+          allTasks={todayTasks}
+          onComplete={completeTask}
+          onDelete={deleteTask}
+          onNavigate={(task) => setSelectedTask(task)}
+        />
+      )}
 
       <Navigation />
     </div>

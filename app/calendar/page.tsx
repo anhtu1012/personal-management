@@ -34,12 +34,12 @@ export default function CalendarPage() {
               <CalendarBlank
                 size={18}
                 weight="fill"
-                className="text-slate-700 sm:hidden"
+                className="text-slate-700 dark:text-slate-300 sm:hidden"
               />
               <CalendarBlank
                 size={22}
                 weight="fill"
-                className="hidden text-slate-700 sm:block"
+                className="hidden text-slate-700 dark:text-slate-300 sm:block"
               />
             </div>
             <h1 className="liquid-title text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
@@ -51,7 +51,7 @@ export default function CalendarPage() {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => router.push("/calendar/create")}
-            className="liquid-panel flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-800 sm:gap-2 sm:rounded-2xl sm:px-3 sm:py-2 sm:text-sm"
+            className="liquid-panel flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-800 dark:text-slate-100 sm:gap-2 sm:rounded-2xl sm:px-3 sm:py-2 sm:text-sm"
           >
             <Plus size={16} weight="bold" className="sm:hidden" />
             <Plus size={18} weight="bold" className="hidden sm:block" />
@@ -69,8 +69,8 @@ export default function CalendarPage() {
         />
 
         <GlassCard className="p-3 sm:p-4" glow="none">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-700 sm:gap-3 sm:text-sm">
-            <span className="font-semibold text-slate-600">Danh mục:</span>
+          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-700 dark:text-slate-300 sm:gap-3 sm:text-sm">
+            <span className="font-semibold text-slate-600 dark:text-slate-400">Danh mục:</span>
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-sky-500" /> Công việc
             </span>

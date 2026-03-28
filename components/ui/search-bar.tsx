@@ -32,10 +32,10 @@ export function SearchBar({
   return (
     <div
       className={cn(
-        "relative flex items-center gap-2 rounded-xl border bg-white/75 px-3 py-2 transition-all",
+        "relative flex items-center gap-2 rounded-xl border bg-white/75 px-3 py-2 transition-all dark:bg-slate-800/75",
         isFocused
-          ? "border-slate-400 ring-2 ring-slate-300/50"
-          : "border-slate-300/60",
+          ? "border-slate-400 ring-2 ring-slate-300/50 dark:border-slate-500 dark:ring-slate-600/50"
+          : "border-slate-300/60 dark:border-slate-600/60",
         className
       )}
     >
@@ -43,7 +43,7 @@ export function SearchBar({
         size={18}
         className={cn(
           "shrink-0 transition-colors",
-          isFocused ? "text-slate-700" : "text-slate-500"
+          isFocused ? "text-slate-700 dark:text-slate-300" : "text-slate-500 dark:text-slate-400"
         )}
         weight="bold"
       />
@@ -54,7 +54,7 @@ export function SearchBar({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
-        className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+        className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400 text-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
       />
       <AnimatePresence>
         {query && (
@@ -64,9 +64,9 @@ export function SearchBar({
             exit={{ opacity: 0, scale: 0.8 }}
             type="button"
             onClick={handleClear}
-            className="shrink-0 rounded-full p-1 hover:bg-slate-200"
+            className="shrink-0 rounded-full p-1 hover:bg-slate-200 dark:hover:bg-slate-700"
           >
-            <X size={14} weight="bold" className="text-slate-600" />
+            <X size={14} weight="bold" className="text-slate-600 dark:text-slate-400" />
           </motion.button>
         )}
       </AnimatePresence>

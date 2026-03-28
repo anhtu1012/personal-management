@@ -6,10 +6,11 @@ import { motion, AnimatePresence } from "framer-motion"
 import { GlassCard } from "./glass-card"
 import { Input } from "./input"
 import { Label } from "./label"
-import { useTasks } from "@/hooks/use-tasks"
+import { useTaskContext } from "@/contexts/TaskContext"
 import { Task, Priority } from "@/types"
 import { cn } from "@/lib/utils"
 import { notifications } from "@/lib/notifications"
+import { haptics } from "@/lib/haptics"
 
 interface QuickAddModalProps {
   isOpen: boolean
@@ -17,7 +18,7 @@ interface QuickAddModalProps {
 }
 
 export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
-  const { addTask } = useTasks()
+  const { addTask } = useTaskContext()
   const [title, setTitle] = useState("")
   const [date, setDate] = useState(new Date().toISOString().split("T")[0])
   const [time, setTime] = useState("")
@@ -27,6 +28,8 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!title.trim()) return
+
+    haptics.medium()
 
     const newTask = addTask({
       title,
@@ -47,12 +50,16 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
       }
     }
 
+    haptics.success()
+
     // Reset form
     setTitle("")
     setDate(new Date().toISOString().split("T")[0])
     setTime("")
     setCategory("personal")
     setPriority("medium")
+    
+    // Close modal
     onClose()
   }
 
@@ -66,7 +73,7 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-100 bg-slate-900/40 backdrop-blur-sm"
+            className="fixed inset-0 z-100 bg-slate-900/40 backdrop-blur-sm dark:bg-black/60"
           />
 
           {/* Modal */}
@@ -74,18 +81,19 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed inset-x-4 top-1/2 z-101 mx-auto max-w-md -translate-y-1/2 sm:inset-x-auto"
           >
             <GlassCard variant="strong" className="p-4 sm:p-5">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-bold text-slate-800 sm:text-xl">
+                <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 sm:text-xl">
                   Tạo Task Nhanh
                 </h2>
                 <button
                   onClick={onClose}
-                  className="rounded-lg p-1.5 transition-colors hover:bg-slate-200"
+                  className="rounded-lg p-1.5 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700"
                 >
-                  <X size={20} weight="bold" className="text-slate-700" />
+                  <X size={20} weight="bold" className="text-slate-700 dark:text-slate-300" />
                 </button>
               </div>
 
@@ -99,7 +107,7 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Nhập tiêu đề task..."
-                    className="h-10 rounded-xl border-slate-300/60 bg-white/75"
+                    className="h-11 rounded-xl border-slate-300/60 bg-white/75 text-base dark:border-slate-600/60 dark:bg-slate-800/75"
                     required
                     autoFocus
                   />
@@ -113,14 +121,14 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
                     <div className="relative">
                       <CalendarBlank
                         size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400"
                       />
                       <Input
                         id="quick-date"
                         type="date"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
-                        className="h-10 rounded-xl border-slate-300/60 bg-white/75 pl-9"
+                        className="h-11 rounded-xl border-slate-300/60 bg-white/75 pl-9 text-base dark:border-slate-600/60 dark:bg-slate-800/75"
                         required
                       />
                     </div>
@@ -132,14 +140,14 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
                     <div className="relative">
                       <Clock
                         size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400"
                       />
                       <Input
                         id="quick-time"
                         type="time"
                         value={time}
                         onChange={(e) => setTime(e.target.value)}
-                        className="h-10 rounded-xl border-slate-300/60 bg-white/75 pl-9"
+                        className="h-11 rounded-xl border-slate-300/60 bg-white/75 pl-9 text-base dark:border-slate-600/60 dark:bg-slate-800/75"
                       />
                     </div>
                   </div>
@@ -153,19 +161,23 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
                       { value: "medium", label: "TB", color: "amber" },
                       { value: "low", label: "Thấp", color: "blue" },
                     ].map((pri) => (
-                      <button
+                      <motion.button
                         key={pri.value}
                         type="button"
-                        onClick={() => setPriority(pri.value as Priority)}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          haptics.selection()
+                          setPriority(pri.value as Priority)
+                        }}
                         className={cn(
-                          "rounded-lg border px-3 py-2 text-xs font-medium transition-all",
+                          "rounded-lg border px-3 py-2.5 text-xs font-medium transition-all active:scale-95",
                           priority === pri.value
                             ? `border-${pri.color}-400 bg-${pri.color}-50 shadow-md ring-2 ring-${pri.color}-300/50`
-                            : "border-slate-300/50 bg-white/70 hover:bg-white"
+                            : "border-slate-300/50 bg-white/70 active:bg-white"
                         )}
                       >
                         {pri.label}
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
                 </div>
@@ -179,46 +191,52 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
                       { value: "health", label: "SK", color: "emerald" },
                       { value: "other", label: "KC", color: "slate" },
                     ].map((cat) => (
-                      <button
+                      <motion.button
                         key={cat.value}
                         type="button"
-                        onClick={() => setCategory(cat.value as Task["category"])}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          haptics.selection()
+                          setCategory(cat.value as Task["category"])
+                        }}
                         className={cn(
-                          "flex flex-col items-center gap-1.5 rounded-lg border p-2 transition-all",
+                          "flex flex-col items-center gap-1.5 rounded-lg border p-2.5 transition-all active:scale-95",
                           category === cat.value
                             ? `border-${cat.color}-400 bg-${cat.color}-50 shadow-md`
-                            : "border-slate-300/50 bg-white/70 hover:bg-white"
+                            : "border-slate-300/50 bg-white/70"
                         )}
                       >
                         <div
                           className={cn(
-                            "flex h-6 w-6 items-center justify-center rounded-full",
+                            "flex h-7 w-7 items-center justify-center rounded-full",
                             `bg-${cat.color}-500`
                           )}
                         >
-                          <span className="text-[9px] font-bold text-white">
+                          <span className="text-[10px] font-bold text-white">
                             {cat.label}
                           </span>
                         </div>
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pt-2">
-                  <button
+                  <motion.button
                     type="button"
+                    whileTap={{ scale: 0.97 }}
                     onClick={onClose}
-                    className="rounded-xl border border-slate-300/60 bg-white/78 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white"
+                    className="rounded-xl border border-slate-300/60 bg-white/78 px-4 py-3 text-sm font-semibold text-slate-700 transition active:scale-97 dark:border-slate-600/60 dark:bg-slate-800/78 dark:text-slate-200"
                   >
                     Hủy
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
                     type="submit"
-                    className="rounded-xl border border-emerald-400/70 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100"
+                    whileTap={{ scale: 0.97 }}
+                    className="rounded-xl border border-emerald-400/70 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 transition active:scale-97"
                   >
                     Tạo Task
-                  </button>
+                  </motion.button>
                 </div>
               </form>
             </GlassCard>

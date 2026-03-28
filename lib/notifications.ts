@@ -40,8 +40,8 @@ export const notifications = {
     const taskDate = new Date(taskDateTime)
     const timeDiff = taskDate.getTime() - now.getTime()
 
-    // Only schedule if task is in the future and within 24 hours
-    if (timeDiff > 0 && timeDiff <= 24 * 60 * 60 * 1000) {
+    // Schedule for any future task (removed 24h limit)
+    if (timeDiff > 0) {
       // Store in localStorage for persistence
       const reminders = getStoredReminders()
       const newReminder = {
@@ -64,7 +64,11 @@ export const notifications = {
         })
       }
 
-      // Fallback: Schedule the notification in main thread
+      // Schedule the notification in main thread
+      // For tasks > 24h, we'll reschedule on next app load
+      const maxTimeout = 2147483647 // Max setTimeout value (~24.8 days)
+      const scheduleTime = Math.min(timeDiff, maxTimeout)
+      
       setTimeout(() => {
         // Check if service worker already showed it
         const currentReminders = getStoredReminders()
@@ -86,11 +90,11 @@ export const notifications = {
 
           // Remove from stored reminders after showing
           const updatedReminders = getStoredReminders().filter(
-            (r) => r.time !== taskDateTime
+            (r) => r.id !== newReminder.id
           )
           localStorage.setItem("task_reminders", JSON.stringify(updatedReminders))
         }
-      }, timeDiff)
+      }, scheduleTime)
     }
   },
 
@@ -103,7 +107,11 @@ export const notifications = {
       const taskDate = new Date(reminder.time)
       const timeDiff = taskDate.getTime() - now.getTime()
 
-      if (timeDiff > 0 && timeDiff <= 24 * 60 * 60 * 1000) {
+      if (timeDiff > 0) {
+        // Schedule for any future task
+        const maxTimeout = 2147483647 // Max setTimeout value
+        const scheduleTime = Math.min(timeDiff, maxTimeout)
+        
         setTimeout(() => {
           const notification = notifications.show("⏰ Nhắc nhở Task", {
             body: reminder.title,
@@ -126,7 +134,7 @@ export const notifications = {
             "task_reminders",
             JSON.stringify(updatedReminders)
           )
-        }, timeDiff)
+        }, scheduleTime)
       } else if (timeDiff <= 0) {
         // Remove expired reminders
         const updatedReminders = getStoredReminders().filter(
