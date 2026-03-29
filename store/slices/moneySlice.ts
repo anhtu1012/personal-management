@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { Member, Expense, Balance, Payment } from '@/types'
+import type { Member, Expense, Balance, Payment, PersonalExpense } from '@/types'
 
 interface MoneyState {
   members: Member[]
   expenses: Expense[]
   payments: Payment[]
+  personalExpenses: PersonalExpense[]
   loading: boolean
 }
 
@@ -12,6 +13,7 @@ const initialState: MoneyState = {
   members: [],
   expenses: [],
   payments: [],
+  personalExpenses: [],
   loading: false,
 }
 
@@ -138,6 +140,27 @@ const moneySlice = createSlice({
       state.payments = state.payments.filter(p => p.memberId !== memberId)
     },
 
+    // Personal Expense actions
+    addPersonalExpense: (state, action: PayloadAction<Omit<PersonalExpense, 'id' | 'createdAt'>>) => {
+      const newExpense: PersonalExpense = {
+        ...action.payload,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
+      }
+      state.personalExpenses.push(newExpense)
+    },
+
+    updatePersonalExpense: (state, action: PayloadAction<PersonalExpense>) => {
+      const index = state.personalExpenses.findIndex(e => e.id === action.payload.id)
+      if (index !== -1) {
+        state.personalExpenses[index] = action.payload
+      }
+    },
+
+    deletePersonalExpense: (state, action: PayloadAction<string>) => {
+      state.personalExpenses = state.personalExpenses.filter(e => e.id !== action.payload)
+    },
+
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload
     },
@@ -156,6 +179,9 @@ export const {
   addPayment,
   deletePayment,
   resetMemberData,
+  addPersonalExpense,
+  updatePersonalExpense,
+  deletePersonalExpense,
   setLoading,
 } = moneySlice.actions
 

@@ -21,7 +21,7 @@ const themePersistConfig = {
 const moneyPersistConfig = {
   key: "money",
   storage,
-  whitelist: ["members", "expenses", "payments"], // Persist members, expenses và payments
+  whitelist: ["members", "expenses", "payments", "personalExpenses"], // Persist all money data
 }
 
 export const persistedTaskReducer = persistReducer(tasksPersistConfig, taskReducer)

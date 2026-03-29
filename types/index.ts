@@ -75,3 +75,14 @@ export interface Payment {
   note?: string;
   createdAt: string;
 }
+
+// Personal Expense Types
+export interface PersonalExpense {
+  id: string;
+  description: string;
+  amount: number;
+  date: string; // ISO date string
+  category: 'food' | 'transport' | 'entertainment' | 'shopping' | 'bills' | 'health' | 'other';
+  note?: string;
+  createdAt: string;
+}
