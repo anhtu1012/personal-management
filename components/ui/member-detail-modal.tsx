@@ -331,7 +331,7 @@ export function MemberDetailModal({
                           value={settlementAmount}
                           onChange={(e) => handleSettlementAmountChange(e.target.value)}
                           placeholder="Nhập số (VD: 25 = 25.000đ)"
-                          className="h-10 rounded-xl"
+                          className="h-10 rounded-xl text-base"
                         />
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           {quickSettlementAmounts.map((value) => (

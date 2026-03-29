@@ -262,7 +262,7 @@ export default function SettingsPage() {
 
         <GlassCard className="p-4 text-center text-xs text-slate-500 dark:text-slate-400" glow="none">
           <p>Quản Lý Lịch Trình v0.0.1</p>
-          <p className="mt-1">Made with 💙 using Next.js & TypeScript</p>
+          <p className="mt-1">Nhà phát triển: Phạm Anh Tú</p>
         </GlassCard>
       </div>
 

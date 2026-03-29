@@ -392,17 +392,7 @@ export default function MoneyManagementPage() {
             <Plus size={28} weight="bold" className="hidden text-white sm:block" />
           </motion.button>
 
-          <motion.button
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => router.push('/personal-expense')}
-            className="fixed bottom-20 right-20 z-40 flex size-14 items-center justify-center rounded-2xl bg-linear-to-br from-sky-500 to-cyan-500 shadow-lg shadow-sky-500/30 transition-shadow hover:shadow-xl hover:shadow-sky-500/40 sm:bottom-24 sm:right-24 sm:size-16"
-            title="Quản lý tiền cá nhân"
-          >
-            <Wallet size={24} weight="bold" className="text-white sm:hidden" />
-            <Wallet size={28} weight="bold" className="hidden text-white sm:block" />
-          </motion.button>
+         
         </>
       )}
 

@@ -128,7 +128,7 @@ export function PersonalExpenseAddModal({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="VD: Ăn trưa"
-                    className="h-10 rounded-xl"
+                    className="h-10 rounded-xl text-base"
                   />
                 </div>
 
@@ -144,7 +144,7 @@ export function PersonalExpenseAddModal({
                     value={amount}
                     onChange={(e) => handleAmountChange(e.target.value)}
                     placeholder="Nhập số (VD: 25 = 25.000đ)"
-                    className="h-10 rounded-xl"
+                    className="h-10 rounded-xl text-base"
                   />
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {quickAmounts.map((value) => (
@@ -175,7 +175,7 @@ export function PersonalExpenseAddModal({
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="h-10 rounded-xl"
+                    className="h-10 rounded-xl text-base"
                   />
                 </div>
 
@@ -213,7 +213,7 @@ export function PersonalExpenseAddModal({
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     placeholder="Thêm ghi chú..."
-                    className="min-h-[80px] rounded-xl"
+                    className="min-h-[80px] rounded-xl text-base"
                   />
                 </div>
 
