@@ -66,3 +66,12 @@ export interface Settlement {
   to: string; // Member ID
   amount: number;
 }
+
+export interface Payment {
+  id: string;
+  memberId: string; // Người thanh toán
+  amount: number; // Số tiền đã trả
+  date: string;
+  note?: string;
+  createdAt: string;
+}

@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
-import { X, CaretDown, CaretRight, Check, FilePdf, Printer } from "@phosphor-icons/react"
+import { X, CaretDown, CaretRight, Check, Printer, CurrencyCircleDollar, Trash } from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "framer-motion"
 import { GlassCard } from "./glass-card"
 import { Input } from "./input"
@@ -12,16 +12,16 @@ import { cn, formatMoney } from "@/lib/utils"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 import { useState } from "react"
-import { exportToPDF } from "@/lib/export-pdf"
+import { useAppSelector } from "@/store/hooks"
 
 interface MemberDetailModalProps {
   isOpen: boolean
   onClose: () => void
   member: Member
   expenses: Expense[]
-  allMembers: Member[]
   onToggleSettled: (expenseId: string) => void
   onSettleAll: (memberId: string, amount: number) => void
+  onReset: (memberId: string) => void
 }
 
 export function MemberDetailModal({
@@ -29,13 +29,23 @@ export function MemberDetailModal({
   onClose,
   member,
   expenses,
-  allMembers,
   onToggleSettled,
   onSettleAll,
+  onReset,
 }: MemberDetailModalProps) {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [settlementAmount, setSettlementAmount] = useState("")
   const [showSettlement, setShowSettlement] = useState(false)
+  
+  // Lấy payments từ Redux
+  const payments = useAppSelector((state) => state.money.payments)
+  
+  // Lọc payments của member này
+  const memberPayments = useMemo(() => {
+    return payments
+      .filter((p: { memberId: string }) => p.memberId === member.id)
+      .sort((a: { date: string }, b: { date: string }) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  }, [payments, member.id])
   // Lọc expenses liên quan đến member này
   const memberExpenses = useMemo(() => {
     return expenses.filter(
@@ -78,27 +88,32 @@ export function MemberDetailModal({
     })
   }
 
-  const getMemberName = (memberId: string) => {
-    return allMembers.find((m) => m.id === memberId)?.name || "Unknown"
-  }
-
   const calculateMemberShare = (expense: Expense) => {
     return expense.amount / expense.splitBetween.length
   }
 
-  const totalPaid = useMemo(() => {
-    return memberExpenses
-      .filter((e) => e.paidBy === member.id && !e.settled)
-      .reduce((sum, e) => sum + e.amount, 0)
-  }, [memberExpenses, member.id])
-
-  const totalOwed = useMemo(() => {
+  // Tổng tiền phải trả (phần của member trong các expenses chưa settled)
+  const totalAmount = useMemo(() => {
     return memberExpenses
       .filter((e) => e.splitBetween.includes(member.id) && !e.settled)
-      .reduce((sum, e) => sum + calculateMemberShare(e), 0)
+      .reduce((sum, e) => sum + (e.amount / e.splitBetween.length), 0)
   }, [memberExpenses, member.id])
 
-  const balance = totalPaid - totalOwed
+  // Tổng tiền đã thanh toán (từ payments)
+  const totalPaid = useMemo(() => {
+    return memberPayments.reduce((sum: number, p: { amount: number }) => sum + p.amount, 0)
+  }, [memberPayments])
+
+  // Số tiền còn lại phải trả
+  const remaining = useMemo(() => {
+    return Math.max(0, totalAmount - totalPaid)
+  }, [totalAmount, totalPaid])
+
+  console.log('=== Balance Calculation ===')
+  console.log('Member:', member.name)
+  console.log('Tổng (phần của member):', totalAmount)
+  console.log('Đã trả (payments):', totalPaid)
+  console.log('Còn lại:', remaining)
 
   const handleSettlementAmountChange = (value: string) => {
     const numValue = value.replace(/[^0-9]/g, '')
@@ -113,16 +128,31 @@ export function MemberDetailModal({
 
   const handleSettleAll = () => {
     const amount = getFinalSettlementAmount()
-    if (amount <= 0) return
+    
+    if (amount <= 0) {
+      return
+    }
+    
+    // Tính số nợ hiện tại
+    const currentDebt = remaining
+    
+    if (amount > currentDebt) {
+      if (!confirm(`Số tiền thanh toán (${formatMoney(amount)}đ) lớn hơn số còn lại (${formatMoney(currentDebt)}đ). Bạn có muốn tiếp tục?`)) {
+        return
+      }
+    }
     
     onSettleAll(member.id, amount)
+    
     setSettlementAmount("")
     setShowSettlement(false)
   }
 
-  const handleExportPDF = () => {
-    // Sử dụng window.print() - đơn giản và luôn hoạt động
-    handlePrint()
+  const handleReset = () => {
+    if (confirm(`Xóa toàn bộ dữ liệu của ${member.name}?\n\nĐiều này sẽ xóa:\n- Tất cả chi tiêu liên quan\n- Tất cả lịch sử thanh toán\n\nHành động này không thể hoàn tác!`)) {
+      onReset(member.id)
+      onClose()
+    }
   }
 
   const handlePrint = () => {
@@ -228,19 +258,19 @@ export function MemberDetailModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <button
+                    onClick={handleReset}
+                    className="rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-rose-100 active:scale-95 dark:hover:bg-rose-900/30"
+                    title="Xóa toàn bộ dữ liệu"
+                  >
+                    <Trash size={20} weight="bold" className="text-rose-600 dark:text-rose-400" />
+                  </button>
+                  <button
                     onClick={handlePrint}
                     className="rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-slate-200 active:scale-95 dark:hover:bg-slate-700"
                     title="In (Ctrl+P)"
                   >
                     <Printer size={20} weight="bold" className="text-slate-700 dark:text-slate-300" />
                   </button>
-                  {/* <button
-                    onClick={handleExportPDF}
-                    className="rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-slate-200 active:scale-95 dark:hover:bg-slate-700"
-                    title="Xuất PDF"
-                  >
-                    <FilePdf size={20} weight="bold" className="text-rose-600 dark:text-rose-400" />
-                  </button> */}
                   <button
                     onClick={onClose}
                     className="rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-slate-200 active:scale-95 dark:hover:bg-slate-700"
@@ -253,35 +283,27 @@ export function MemberDetailModal({
               {/* Summary */}
               <div className="mb-4 grid grid-cols-3 gap-2">
                 <div className="rounded-xl border border-slate-300/60 bg-white/70 p-3 dark:border-slate-600/60 dark:bg-slate-800/70">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Tổng</p>
+                  <p className="mt-1 truncate text-base font-bold text-slate-800 dark:text-slate-100">
+                    {formatMoney(totalAmount)}đ
+                  </p>
+                </div>
+                <div className="rounded-xl border border-slate-300/60 bg-white/70 p-3 dark:border-slate-600/60 dark:bg-slate-800/70">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Còn lại</p>
+                  <p className="mt-1 truncate text-base font-bold text-rose-600 dark:text-rose-400">
+                    {formatMoney(remaining)}đ
+                  </p>
+                </div>
+                <div className="rounded-xl border border-slate-300/60 bg-white/70 p-3 dark:border-slate-600/60 dark:bg-slate-800/70">
                   <p className="text-xs text-slate-600 dark:text-slate-400">Đã trả</p>
-                  <p className="mt-1 truncate text-base font-bold text-slate-800 dark:text-slate-100">
+                  <p className="mt-1 truncate text-base font-bold text-emerald-600 dark:text-emerald-400">
                     {formatMoney(totalPaid)}đ
-                  </p>
-                </div>
-                <div className="rounded-xl border border-slate-300/60 bg-white/70 p-3 dark:border-slate-600/60 dark:bg-slate-800/70">
-                  <p className="text-xs text-slate-600 dark:text-slate-400">Phải trả</p>
-                  <p className="mt-1 truncate text-base font-bold text-slate-800 dark:text-slate-100">
-                    {formatMoney(totalOwed)}đ
-                  </p>
-                </div>
-                <div className="rounded-xl border border-slate-300/60 bg-white/70 p-3 dark:border-slate-600/60 dark:bg-slate-800/70">
-                  <p className="text-xs text-slate-600 dark:text-slate-400">Số dư</p>
-                  <p
-                    className={cn(
-                      "mt-1 truncate text-base font-bold",
-                      balance >= 0
-                        ? "text-emerald-600 dark:text-emerald-400"
-                        : "text-rose-600 dark:text-rose-400"
-                    )}
-                  >
-                    {balance >= 0 ? "+" : ""}
-                    {formatMoney(Math.abs(balance))}đ
                   </p>
                 </div>
               </div>
 
               {/* Settlement Section */}
-              {balance < 0 && (
+              {remaining > 0 && (
                 <div className="mb-4">
                   <button
                     onClick={() => setShowSettlement(!showSettlement)}
@@ -324,7 +346,7 @@ export function MemberDetailModal({
                           ))}
                           <button
                             type="button"
-                            onClick={() => setSettlementAmount(Math.abs(balance).toString())}
+                            onClick={() => setSettlementAmount(remaining.toString())}
                             className="rounded-lg border border-emerald-400/70 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 transition-all hover:bg-emerald-100 dark:border-emerald-500/60 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50"
                           >
                             Toàn bộ
@@ -345,6 +367,37 @@ export function MemberDetailModal({
                       </motion.div>
                     )}
                   </AnimatePresence>
+                </div>
+              )}
+
+              {/* Lịch sử thanh toán */}
+              {memberPayments.length > 0 && (
+                <div className="mb-4">
+                  <h2 className="mb-2 text-base font-semibold dark:text-slate-100 sm:text-lg md:text-xl">
+                    Lịch sử thanh toán
+                  </h2>
+                  <div className="space-y-2">
+                    {memberPayments.map((payment: { id: string; amount: number; date: string }) => (
+                      <motion.div
+                        key={payment.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="flex items-center gap-3 rounded-xl border border-emerald-300/60 bg-emerald-50/50 p-3 dark:border-emerald-600/60 dark:bg-emerald-900/20"
+                      >
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500">
+                          <CurrencyCircleDollar size={20} weight="bold" className="text-white" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                            Đã thanh toán {formatMoney(payment.amount)}đ
+                          </p>
+                          <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                            {format(new Date(payment.date), "dd/MM/yyyy HH:mm", { locale: vi })}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -394,7 +447,6 @@ export function MemberDetailModal({
                             <div className="space-y-1 border-t border-slate-200/60 p-2 dark:border-slate-700/60">
                               {categoryExpenses.map((expense) => {
                                 const share = calculateMemberShare(expense)
-                                const isPayer = expense.paidBy === member.id
 
                                 return (
                                   <div
@@ -419,8 +471,8 @@ export function MemberDetailModal({
                                         <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
                                           {format(new Date(expense.date), "dd MMM yyyy", { locale: vi })}
                                           {" • "}
-                                          {isPayer ? "Bạn trả" : `${getMemberName(expense.paidBy)} trả`}
-                                          {" • "}
+                                          {/* {isPayer ? "Bạn trả" : `${getMemberName(expense.paidBy)} trả`}
+                                          {" • "} */}
                                           Chia {expense.splitBetween.length} người
                                         </p>
                                       </div>
@@ -480,10 +532,9 @@ export function MemberDetailModal({
                 <MemberDetailPDF
                   member={member}
                   expenses={memberExpenses}
-                  allMembers={allMembers}
+                  totalAmount={totalAmount}
                   totalPaid={totalPaid}
-                  totalOwed={totalOwed}
-                  balance={balance}
+                  remaining={remaining}
                 />
               </div>
             </div>

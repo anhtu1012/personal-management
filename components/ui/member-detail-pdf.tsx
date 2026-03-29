@@ -8,19 +8,17 @@ import { vi } from "date-fns/locale"
 interface MemberDetailPDFProps {
   member: Member
   expenses: Expense[]
-  allMembers: Member[]
+  totalAmount: number
   totalPaid: number
-  totalOwed: number
-  balance: number
+  remaining: number
 }
 
 export function MemberDetailPDF({
   member,
   expenses,
-  allMembers,
+  totalAmount,
   totalPaid,
-  totalOwed,
-  balance,
+  remaining,
 }: MemberDetailPDFProps) {
   const categories = [
     { value: "food", label: "Ăn uống", color: "#f97316" },
@@ -29,10 +27,6 @@ export function MemberDetailPDF({
     { value: "shopping", label: "Mua sắm", color: "#ec4899" },
     { value: "other", label: "Khác", color: "#64748b" },
   ]
-
-  const getMemberName = (memberId: string) => {
-    return allMembers.find((m) => m.id === memberId)?.name || "Unknown"
-  }
 
   const calculateMemberShare = (expense: Expense) => {
     return expense.amount / expense.splitBetween.length
@@ -56,41 +50,66 @@ export function MemberDetailPDF({
       fontFamily: 'Arial, sans-serif', 
       padding: '20px',
       backgroundColor: '#ffffff',
-      color: '#1e293b'
+      color: '#1e293b',
+      minHeight: '100vh'
     }}>
       {/* Header */}
       <div style={{ 
         borderBottom: '3px solid #e2e8f0',
         paddingBottom: '20px',
-        marginBottom: '20px'
+        marginBottom: '20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            borderRadius: '12px',
-            backgroundColor: member.color,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#ffffff',
-            fontSize: '24px',
-            fontWeight: 'bold'
-          }}>
-            {member.name.charAt(0).toUpperCase()}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '12px',
+              backgroundColor: member.color,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ffffff',
+              fontSize: '24px',
+              fontWeight: 'bold'
+            }}>
+              {member.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 'bold', color: '#1e293b' }}>
+                {member.name}
+              </h1>
+              <p style={{ margin: '5px 0 0 0', color: '#64748b', fontSize: '14px' }}>
+                Báo cáo chi tiết chi tiêu
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 'bold' }}>
-              {member.name}
-            </h1>
-            <p style={{ margin: '5px 0 0 0', color: '#64748b', fontSize: '14px' }}>
-              Báo cáo chi tiết chi tiêu
-            </p>
-          </div>
+          <p style={{ margin: 0, color: '#64748b', fontSize: '12px' }}>
+            Ngày xuất: {format(new Date(), "dd/MM/yyyy HH:mm", { locale: vi })}
+          </p>
         </div>
-        <p style={{ margin: 0, color: '#64748b', fontSize: '12px' }}>
-          Ngày xuất: {format(new Date(), "dd/MM/yyyy HH:mm", { locale: vi })}
-        </p>
+        
+        {/* QR Code */}
+        <div style={{ textAlign: 'center' }}>
+          <img 
+            src="/image/QR.png" 
+            alt="QR Code" 
+            style={{ 
+              width: '120px', 
+              height: '120px',
+              border: '3px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '8px',
+              backgroundColor: '#ffffff'
+            }} 
+          />
+          <p style={{ margin: '8px 0 0 0', fontSize: '11px', color: '#64748b', fontWeight: '600' }}>
+            Scan để xem online
+          </p>
+        </div>
       </div>
 
       {/* Summary */}
@@ -106,42 +125,42 @@ export function MemberDetailPDF({
           padding: '15px',
           backgroundColor: '#f8fafc'
         }}>
+          <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>Tổng</p>
+          <p style={{ margin: '8px 0 0 0', fontSize: '20px', fontWeight: 'bold', color: '#1e293b' }}>
+            {formatMoney(totalAmount)}đ
+          </p>
+        </div>
+        <div style={{
+          border: '1px solid #e2e8f0',
+          borderRadius: '8px',
+          padding: '15px',
+          backgroundColor: '#f8fafc'
+        }}>
+          <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>Còn lại</p>
+          <p style={{ margin: '8px 0 0 0', fontSize: '20px', fontWeight: 'bold', color: '#ef4444' }}>
+            {formatMoney(remaining)}đ
+          </p>
+        </div>
+        <div style={{
+          border: '1px solid #e2e8f0',
+          borderRadius: '8px',
+          padding: '15px',
+          backgroundColor: '#f8fafc'
+        }}>
           <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>Đã trả</p>
-          <p style={{ margin: '8px 0 0 0', fontSize: '20px', fontWeight: 'bold' }}>
-            {formatMoney(totalPaid)}đ
-          </p>
-        </div>
-        <div style={{
-          border: '1px solid #e2e8f0',
-          borderRadius: '8px',
-          padding: '15px',
-          backgroundColor: '#f8fafc'
-        }}>
-          <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>Phải trả</p>
-          <p style={{ margin: '8px 0 0 0', fontSize: '20px', fontWeight: 'bold' }}>
-            {formatMoney(totalOwed)}đ
-          </p>
-        </div>
-        <div style={{
-          border: '1px solid #e2e8f0',
-          borderRadius: '8px',
-          padding: '15px',
-          backgroundColor: '#f8fafc'
-        }}>
-          <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>Số dư</p>
           <p style={{ 
             margin: '8px 0 0 0', 
             fontSize: '20px', 
             fontWeight: 'bold',
-            color: balance >= 0 ? '#10b981' : '#ef4444'
+            color: '#10b981'
           }}>
-            {balance >= 0 ? '+' : ''}{formatMoney(Math.abs(balance))}đ
+            {formatMoney(totalPaid)}đ
           </p>
         </div>
       </div>
 
-      {/* Expenses by Category */}
-      <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '15px' }}>
+      {/* Chi tiết chi tiêu */}
+      <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '15px', color: '#1e293b' }}>
         Chi tiết chi tiêu
       </h2>
 
@@ -160,7 +179,8 @@ export function MemberDetailPDF({
               padding: '12px',
               backgroundColor: '#f8fafc',
               borderRadius: '8px',
-              marginBottom: '10px'
+              marginBottom: '10px',
+              color: '#1e293b'
             }}>
               <div style={{
                 width: '12px',
@@ -168,17 +188,16 @@ export function MemberDetailPDF({
                 borderRadius: '50%',
                 backgroundColor: category.color
               }} />
-              <span style={{ fontSize: '16px', fontWeight: '600', flex: 1 }}>
+              <span style={{ fontSize: '16px', fontWeight: '600', flex: 1, color: '#1e293b' }}>
                 {category.label} ({categoryExpenses.length})
               </span>
-              <span style={{ fontSize: '16px', fontWeight: 'bold' }}>
+              <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#1e293b' }}>
                 {formatMoney(categoryTotal)}đ
               </span>
             </div>
 
             {categoryExpenses.map((expense) => {
               const share = calculateMemberShare(expense)
-              const isPayer = expense.paidBy === member.id
 
               return (
                 <div
@@ -194,20 +213,20 @@ export function MemberDetailPDF({
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <div style={{ flex: 1 }}>
-                      <p style={{ margin: 0, fontSize: '14px', fontWeight: '600' }}>
+                      <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#1e293b' }}>
                         {expense.description}
                         {expense.settled && ' ✓'}
                       </p>
                       <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>
                         {format(new Date(expense.date), "dd/MM/yyyy", { locale: vi })}
                         {" • "}
-                        {isPayer ? "Bạn trả" : `${getMemberName(expense.paidBy)} trả`}
-                        {" • "}
+                        {/* {isPayer ? "Bạn trả" : `${getMemberName(expense.paidBy)} trả`} */}
+                        {/* {" • "} */}
                         Chia {expense.splitBetween.length} người
                       </p>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <p style={{ margin: 0, fontSize: '14px', fontWeight: 'bold' }}>
+                      <p style={{ margin: 0, fontSize: '14px', fontWeight: 'bold', color: '#1e293b' }}>
                         {formatMoney(expense.amount)}đ
                       </p>
                       <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>

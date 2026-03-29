@@ -11,10 +11,16 @@ interface MemberCardProps {
   balance: Balance
   onClick: () => void
   onDelete: () => void
+  payments: Array<{ memberId: string; amount: number }>
 }
 
-export function MemberCard({ member, balance, onClick, onDelete }: MemberCardProps) {
+export function MemberCard({ member, balance, onClick, onDelete, payments }: MemberCardProps) {
   const isPositive = balance.balance >= 0
+
+  // Tính tổng payments của member này
+  const totalPaid = payments
+    .filter(p => p.memberId === member.id)
+    .reduce((sum, p) => sum + p.amount, 0)
 
   return (
     <motion.div
@@ -67,7 +73,7 @@ export function MemberCard({ member, balance, onClick, onDelete }: MemberCardPro
                   </button>
                 </div>
                 <p className="mt-0.5 truncate text-xs text-slate-600 dark:text-slate-400 sm:text-sm">
-                  Đã trả: {formatMoney(balance.totalPaid)}đ
+                  Đã trả: {formatMoney(totalPaid)}đ
                 </p>
               </div>
             </div>
